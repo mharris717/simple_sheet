@@ -1,0 +1,13 @@
+%html
+  %head
+    %title DB Changes
+    - views.each do |v,str|
+      %script{:type => "text/x-handlebars", "data-template-name" => "views_#{v}"}
+        = str
+    - js_files.each do |f|
+      %script{:src => f}
+    - css_files.each do |f|
+      %link{:href => f, :rel => :stylesheet}
+    
+  %body
+    #output
