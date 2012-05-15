@@ -1,0 +1,19 @@
+class File
+  def self.create(f,str)
+    File.open(f,"w") do |ff|
+      ff.write str
+    end
+  end
+end
+
+
+LRE.watch(".*coffee") do |source|
+  require 'mharris_ext'
+  require 'coffee-script'
+  target = source.gsub(".coffee",".js").gsub("javascripts","javascripts/generated")
+  require 'fileutils'
+  FileUtils.mkdir_p(File.dirname(target))
+  
+  res = CoffeeScript.compile File.read(source)
+  File.create(target,res)
+end

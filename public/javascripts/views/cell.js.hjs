@@ -1,0 +1,5 @@
+{{#if editing}}
+  editing
+{{else}}
+  {{value}}
+{{/if}}

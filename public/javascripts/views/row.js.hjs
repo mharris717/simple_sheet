@@ -1,0 +1,7 @@
+<tr>
+  {{#each row.values}}
+    <td>
+      {{view App.CellView value=this}}
+    </td>
+  {{/each}}
+</tr>
