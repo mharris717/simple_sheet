@@ -1,6 +1,8 @@
 <table class='main'>
-  {{#each table.fields tagName="tr"}}
-    <th>{{this}}</th>
+  {{#each table.columns tagName="tr"}}
+    <th>
+      {{view App.ColumnHeaderView column=this}}
+    </th>
   {{/each}}
   {{#each table.rows}}
     {{view App.RowView row=this}}

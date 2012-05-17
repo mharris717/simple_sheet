@@ -12,37 +12,54 @@ app.Cell = Ember.Object.extend
     ,1000
     
   recalc: ->
-    logger.log 'recalc'
+    logger.log "recalc for #{@$field}"
     v = @$rawValue
-    @set('rawValue',""+v+" ")
+    if isPresent(v)
+      v = if v == v.trim() then ""+v+" " else v.trim()
+      @set('rawValue',v)
+    else if !v
+      @set('rawValue'," ")
+    else
+      @set('rawValue',""+v+" ")
+
 
   deps: ->
-    @$row.$fields.filter (f) => 
-      @$rawValue && 
-      @$rawValue.match && 
-      @$rawValue.match(f) 
+    @$row.$table.$fields.filter (f) => 
+      @rawValueOrFormula() && 
+      @rawValueOrFormula().match && 
+      @rawValueOrFormula().match(f) 
 
   depCells: ->
     deps = @deps()
-    @$row.$cells.filter (cell) => _.include(deps,cell.$field)
+    res = @$row.$cells.filter (cell) => _.include(deps,cell.$field)
+    logger.log "depCells for #{@$field} #{res.length} #{@$row.$cells.length} #{@deps().length}"
+    res
     
-  res = Ember.computed (k,v) ->
-    logger.debug "rawValue call"
+
+  res = (Ember.computed (k,v) ->
     f = @$field
     row = @$row
     if arguments.length == 1
       logger.debug "getting rawValue"
-      row.get(f) || row.$table.$formulas[f]
+      row.get(f)
     else
-      logger.debug "setting rawValue"
+      logger.debug "setting rawValue to #{v}"
       row.set(f,v)
-      v
+      v)
   rawValue: res.property().cacheable()
+
+  rawValueOrFormula: ->
+    res = @$rawValue 
+    res = @$row.$table.$formulas.get(@$field) if isBlank(res)
+    res
+
+  columnFormula: (->
+    @$row.$table.$formulas.get(@$field)).property("row.table.formulas")
   
   value: (->
-    logger.debug "value call"
-    res = @$rawValue
-    row = @$row
+    logger.debug "value call for #{@$field}"
+    res = @rawValueOrFormula()
+    row = @$row 
 
     if res && res.substr && res.substr(0,1) == '='
       rest = res.substr(1,999)
@@ -64,10 +81,20 @@ app.Cell = Ember.Object.extend
 
   rawValueChanged: (->
     me = this
-    logger.log 'rawValueChanged'
+    #logger.log 'rawValueChanged'
     for cell in @depCells()
       logger.log "adding observer from #{@$field} to #{cell.$field}"
+      cell.removeObserver 'value',me,@recalc
       cell.addObserver 'value',me,@recalc
+    #logger.log @$row.$table.$formulas
+    @$row.$table.$formulas.removeObserver @$field, me, @recalc
+    @$row.$table.$formulas.addObserver @$field, me, @recalc
   ).observes('rawValue')
 
-logger.log "finished with cell"
+app.Column = Ember.Object.extend
+  formula: ((k,v) ->
+    if arguments.length == 1
+      @$table.$formulas.get(@$field)
+    else
+      @$table.setFormula(@$field,v)
+      v).property('table.formulas')

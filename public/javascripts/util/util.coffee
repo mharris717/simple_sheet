@@ -129,3 +129,16 @@ window.onlyOnceFunc = (f) ->
   ->
     f() if times == 0
     times += 1
+
+window.isBlank = (obj) ->
+  if !obj
+    true
+  else if obj == ''
+    true
+  else if obj.trim && obj.trim() == ''
+    true
+  else
+    false
+
+window.isPresent = (obj) ->
+  !isBlank(obj)

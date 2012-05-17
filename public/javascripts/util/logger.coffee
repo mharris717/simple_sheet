@@ -4,5 +4,5 @@ window.logger = {
     #$('#log').prepend(str+"<br>")
 
   debug: (str) ->
-    a=2
+    #@log(str)
 }

@@ -1,0 +1,8 @@
+<div class='column-header'>
+  {{#if editing}}
+    {{view Ember.TextArea
+    valueBinding="formula"}}
+  {{else}}
+    {{field}}
+  {{/if}}
+</div>
