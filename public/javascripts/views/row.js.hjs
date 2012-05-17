@@ -1,7 +1,7 @@
 <tr>
-  {{#each row.values}}
+  {{#each row.cells}}
     <td>
-      {{view App.CellView value=this}}
+      {{view App.CellView cell=this}}
     </td>
   {{/each}}
 </tr>

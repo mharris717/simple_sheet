@@ -1,10 +1,10 @@
 <table class='main'>
-  <tr>
-    {{#each table.fields}}
-      <th>{{this}}</th>
-    {{/each}}
-  </tr>
+  {{#each table.fields tagName="tr"}}
+    <th>{{this}}</th>
+  {{/each}}
   {{#each table.rows}}
     {{view App.RowView row=this}}
   {{/each}}
 </table>
+
+<div id="log"></div>

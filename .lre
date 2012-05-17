@@ -1,5 +1,5 @@
 class File
-  def self.create(f,str)
+  def self.createx(f,str)
     File.open(f,"w") do |ff|
       ff.write str
     end
@@ -7,7 +7,14 @@ class File
 end
 
 
+
 LRE.watch(".*coffee") do |source|
+  load "main.rb"
+  generate_coffee! source
+end
+
+
+LRE.watch(".*coffeex") do |source|
   require 'mharris_ext'
   require 'coffee-script'
   target = source.gsub(".coffee",".js").gsub("javascripts","javascripts/generated")

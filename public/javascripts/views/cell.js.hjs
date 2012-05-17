@@ -1,5 +1,8 @@
-{{#if editing}}
-  editing
-{{else}}
-  {{value}}
-{{/if}}
+<div class='cell-inner'>
+  {{#if editing}}
+    {{view Ember.TextField
+    valueBinding="cell.rawValue"}}
+  {{else}}
+    {{value}}
+  {{/if}}
+</div>

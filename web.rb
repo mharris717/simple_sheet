@@ -15,10 +15,10 @@ helpers do
       else
         [3,f]
       end
-    end.map { |x| x.gsub("public/","dbchanges/") }
+    end.map { |x| x.gsub("public/","") }
   end
   def css_files
-    Dir["public/stylesheets/**/*.css"].map { |x| x.gsub("public/","dbchanges/") }
+    Dir["public/stylesheets/**/*.css"].map { |x| x.gsub("public/","") }
   end
   def views
     Dir["public/javascripts/views/*"].inject({}) do |h,f|
@@ -31,12 +31,4 @@ end
 
 get "/" do
   haml :index
-end
-
-get "/changes" do
-  repo.changes.map { |x| x.to_json }.to_json
-end
-
-get "/files" do
-  repo.latest_files.map { |x| x.to_json }.to_json
 end
