@@ -13,6 +13,11 @@ LRE.watch(".*coffee") do |source|
   generate_coffee! source
 end
 
+LRE.watch(".*pegjs") do |source|
+  load "main.rb"
+  generate_pegjs! source
+end
+
 
 LRE.watch(".*coffeex") do |source|
   require 'mharris_ext'

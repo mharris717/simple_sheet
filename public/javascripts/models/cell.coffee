@@ -1,18 +1,16 @@
-app = window.App
-
 window.roundNumber = (num, dec) ->
   Math.round(num*Math.pow(10,dec))/Math.pow(10,dec)
 
-
 app.Cell = Ember.Object.extend
+  tableBinding: "row.table"
   init: ->
-    logger.log "making a cell " + @$field
-    setTimeout =>
-      @rawValueChanged()
-    ,1000
+    logger.debug "making a cell " + @$field
+    #setTimeout =>
+    #@rawValueChanged()
+    #,1001
     
   recalc: ->
-    logger.log "recalc for #{@$field}"
+    logger.debug "recalc for #{@$field}"
     v = @$rawValue
     if isPresent(v)
       v = if v == v.trim() then ""+v+" " else v.trim()
@@ -31,8 +29,8 @@ app.Cell = Ember.Object.extend
 
   depCells: ->
     deps = @deps()
-    res = @$row.$cells.filter (cell) => _.include(deps,cell.$field)
-    logger.log "depCells for #{@$field} #{res.length} #{@$row.$cells.length} #{@deps().length}"
+    res = @$row.$cellsInner.filter (cell) => _.include(deps,cell.$field)
+    #logger.log "depCells for #{@$field} #{res.length} #{@$row.$cells.length} #{@deps().length}"
     res
     
 
@@ -68,27 +66,28 @@ app.Cell = Ember.Object.extend
       res
     else
       res).property('rawValue').cacheable()
+
+  areObserversSetup: false
+  ensureSetupObservers: ->
+    if !@areObserversSetup
+      @setupObservers()
+      @areObserversSetup = true
       
-  valueChanged: (-> 
-    logger.log('observe')
-    for cell in @$row.$cells
-      deps = cell.deps()
-      if _.include(deps,@$field)
-        logger.log "need to update #{cell.$field}"
-        cell.recalc()
-
-  )#.observes('value')
-
-  rawValueChanged: (->
+  setupObservers: ->
     me = this
-    #logger.log 'rawValueChanged'
     for cell in @depCells()
-      logger.log "adding observer from #{@$field} to #{cell.$field}"
+      logger.debug "adding observer from #{@$field} to #{cell.$field}"
       cell.removeObserver 'value',me,@recalc
       cell.addObserver 'value',me,@recalc
-    #logger.log @$row.$table.$formulas
     @$row.$table.$formulas.removeObserver @$field, me, @recalc
     @$row.$table.$formulas.addObserver @$field, me, @recalc
+
+  triggerSave: ->
+    @$table.save()
+
+  rawValueChanged: (->
+   @setupObservers()
+   @triggerSave() unless testMode
   ).observes('rawValue')
 
 app.Column = Ember.Object.extend

@@ -1,0 +1,3 @@
+{{#each workspace.tables}}
+  {{view App.TableView table=this}}
+{{/each}}

@@ -12,7 +12,7 @@ getRemoteJsonInner = (url,f,retryOnError=true) ->
       f(data)
     error: (data) ->
       if retryOnError
-        setTimeout ->
+        mySetTimeout ->
           getRemoteJsonInner(url,f,false)
         ,Math.random()*1500
       else
@@ -142,3 +142,20 @@ window.isBlank = (obj) ->
 
 window.isPresent = (obj) ->
   !isBlank(obj)
+
+window.mySetTimeout = (a,b) ->
+  func = time = null
+  if _.isFunction(a)
+    func = a
+    time = b
+  else if _.isFunction(b)
+    func = b
+    time = a
+  else
+    sfgdfgdfg
+
+  if testMode 
+    logger.log "doing func in timeout #{time}"
+    func()
+  else
+    setTimeout func,time

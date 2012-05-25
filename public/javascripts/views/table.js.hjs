@@ -1,0 +1,14 @@
+<table class='main'>
+  <tr>
+    {{#each table.columns}}
+      <th>
+        {{view App.ColumnHeaderView column=this}}
+      </th>
+    {{/each}}
+    {{view App.NewColumnHeaderView table=table}}
+  </tr>
+  {{#each table.rows}}
+    {{view App.RowView row=this}}
+  {{/each}}
+  {{view App.NewRowView table=table}}
+</table>

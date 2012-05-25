@@ -1,0 +1,9 @@
+<th>
+  {{#if editing}}
+    {{view Ember.TextField
+    valueBinding="field"}}
+    <a href="#newColumn" {{action "create"}}>Go</a>
+  {{else}}
+    <a href="#newColumn" {{action "show"}}>+</a>
+  {{/if}}
+</th>

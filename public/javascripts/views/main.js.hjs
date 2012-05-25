@@ -1,12 +1,3 @@
-<table class='main'>
-  {{#each table.columns tagName="tr"}}
-    <th>
-      {{view App.ColumnHeaderView column=this}}
-    </th>
-  {{/each}}
-  {{#each table.rows}}
-    {{view App.RowView row=this}}
-  {{/each}}
-</table>
+{{view App.WorkspaceView workspaceBinding="App.workspace"}}
 
 <div id="log"></div>

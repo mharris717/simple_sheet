@@ -10,10 +10,14 @@ helpers do
         [0,f]
       elsif f =~ /vendor/
         [1,f]
+      elsif f =~ /startup/
+        [1.5,f]
       elsif f =~ /util/
         [2,f]
-      else
+      elsif f =~ /models/
         [3,f]
+      else
+        [4,f]
       end
     end.map { |x| x.gsub("public/","") }
   end

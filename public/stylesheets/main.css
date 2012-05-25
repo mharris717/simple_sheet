@@ -45,5 +45,8 @@ table.main td {
 .cell-inner {
     min-width: 50px;
     min-height: 10px;
+}
 
+table.main th {
+  min-width: 50px;
 }

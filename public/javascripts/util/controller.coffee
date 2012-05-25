@@ -8,7 +8,7 @@ withCachedAndLive = (ops) ->
       ops.callback(res) 
 
   ops.getLive (data) ->
-    setTimeout ->
+    mySetTimeout ->
       console.debug "setting cache #{ops.cacheName}"
       $.jStorage.set(ops.cacheName,data) if doCache
       console.debug "set cache #{ops.cacheName}"
@@ -70,7 +70,7 @@ h = {
   myCreate: (h) ->
     res = @create(h)
     res.set('content',[])
-    setTimeout -> 
+    mySetTimeout -> 
       res.loadFromJson()
     ,100+Math.random()*100
 
