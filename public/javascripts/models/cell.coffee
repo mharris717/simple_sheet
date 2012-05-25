@@ -22,16 +22,39 @@ app.Cell = Ember.Object.extend
 
 
   deps: ->
-    @$row.$table.$fields.filter (f) => 
-      @rawValueOrFormula() && 
-      @rawValueOrFormula().match && 
-      @rawValueOrFormula().match(f) 
+    v = @$rawValueOrFormula
+    if v && v.match
+      @$row.$table.$fields.filter (f) => v.match(f)
+    else
+      []
+
+  foreignDeps: ->
+    logger.debug "foreignDeps call"
+    if false
+      []
+    else
+      v = @$rawValueOrFormula
+      if v && v.match
+        res = v.scan(/\$[a-z_]+\.[a-z_]+/)
+        logger.debug res
+        res || []
+      else
+        []
 
   depCells: ->
     deps = @deps()
     res = @$row.$cellsInner.filter (cell) => _.include(deps,cell.$field)
+
+    foreign = []
+    for full in @foreignDeps()
+      logger.debug "doing foreign"
+      arr = full.substr(1,999).split(".")
+      table = arr[0]
+      field = arr[1]
+      foreign.push @$row.rowFromTable(table).cellForField(field)
+
     #logger.log "depCells for #{@$field} #{res.length} #{@$row.$cells.length} #{@deps().length}"
-    res
+    res.concat(foreign)
     
 
   res = (Ember.computed (k,v) ->
@@ -46,26 +69,28 @@ app.Cell = Ember.Object.extend
       v)
   rawValue: res.property().cacheable()
 
-  rawValueOrFormula: ->
+  rawValueOrFormula: (->
     res = @$rawValue 
-    res = @$row.$table.$formulas.get(@$field) if isBlank(res)
-    res
+    res = @$columnFormula if isBlank(res)
+    res).property('rawValue','columnFormula')
 
   columnFormula: (->
     @$row.$table.$formulas.get(@$field)).property("row.table.formulas")
   
   value: (->
-    logger.debug "value call for #{@$field}"
-    res = @rawValueOrFormula()
+    res = @$rawValueOrFormula
     row = @$row 
 
-    if res && res.substr && res.substr(0,1) == '='
+    res = if res && res.substr && res.substr(0,1) == '='
       rest = res.substr(1,999)
+      logger.log "eval #{@$field} | #{rest}"
       res = row.evalInContext(rest)
       res = roundNumber(res,3) if _.isNumber(res)
       res
     else
-      res).property('rawValue').cacheable()
+      res
+    logger.log "value call for #{@$field} res #{res}"
+    res).property('rawValue').cacheable()
 
   areObserversSetup: false
   ensureSetupObservers: ->

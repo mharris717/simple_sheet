@@ -9,23 +9,43 @@ app.Row = Ember.Object.extend
       res = app.Cell.create(field: k, row: this)
       res).property('fields').cacheable()
 
+  cellHash: (->
+    res = {}
+    res[cell.$field] = cell for cell in @$cellsInner
+    res).property('cellsInner').cacheable()
+
   cells: (->
     cell.ensureSetupObservers() for cell in @$cellsInner
     @$cellsInner).property('cellsInner').cacheable()
 
   cellForField: (f) ->
-    @$cells.filter( (cell) -> cell.$field == f )[0]
+    #@$cellsInner.find( (cell) -> cell.$field == f )
+    @$cellHash[f]
 
   getCellValue: (f) ->
-    @cellForField(f).$value
+    cell = @cellForField(f)
+    throw "no cell #{f} #{@$table.$name} " + @$fields.join(",") unless cell
+    logger.log "got #{cell.$value} for #{f}"
+    res = cell.$value
+    res = parseFloat(res) if res.match && res.match(/^[0-9]+$/)
+    res
 
   multiEval: (str) ->
     try
       eval(str)
     catch error
       eval(CoffeeScript.compile("return #{str}"))
-      
+
+
   evalInContext: (rawStr) ->
+    res = null
+    try
+      res = Eval.evalFormula(this,rawStr,@$table.formulaParser())
+    catch error
+      res = 'error'
+    res
+      
+  evalInContextf: (rawStr) ->
     logger.debug "evalInContext #{rawStr}"
     str = rawStr
 
@@ -64,8 +84,13 @@ app.Row = Ember.Object.extend
     res
 
   rowFromTable: (name) ->
-    t = @$$table.$$workspace.getTable(name)
-    r = t.$$rows
-    c = r.$$content
-    c[0]
+    if name == @$table.$name
+      this
+    else
+      relation = @$table.$relations[0]
+      if relation
+        relation.getRow(this)
+      else
+        c = @$$table.$$workspace.getTable(name).$$rows.$$content
+        c[0]
 

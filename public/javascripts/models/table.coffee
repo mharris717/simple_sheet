@@ -9,13 +9,42 @@ app.Formulas = Ember.Object.extend
   fields: ->
     _.keys(@$fieldHash)
 
+RelationOption = Em.Object.extend
+  rowFromTable: (t) ->
+    res = @$rows[t]
+
+  fields: ->
+    @$$relation.$$baseTable.$$workspace.$$fields
+
+  matches: (str) ->
+    Eval.evalFormula(this,str,@fields())
+
+app.Relation = Em.Object.extend
+  # baseTable, otherTableName, formula
+  otherTable: -> @$$baseTable.$$workspace.getTable(@$$otherTableName)
+
+  getRow: (baseRow) ->
+    res = null
+    for otherRow in @otherTable().$rows.$content
+      if !res
+        rows = {}
+        rows[@$baseTable.$name] = baseRow
+        rows[@$otherTableName] = otherRow
+        option = RelationOption.create(relation: this, rows: rows)
+        res = otherRow if option.matches(@$formula)
+    res
+
+
 app.Table = Em.Object.extend
   init: ->
     @set('rows',Ember.ArrayController.create(content: []))
     @set('formulas',app.Formulas.create())
     @set('addlFields',Ember.ArrayController.create(content: []))
     @set('saveName','abc')
+    @set 'relations', []
     #@setupAll()
+
+  save: -> 4
 
   setFormula: (k,v) ->
     @$formulas.setFormula(k,v)
@@ -26,7 +55,7 @@ app.Table = Em.Object.extend
       for own k,v of row
         if k != '_super' && k != 'table'
           res[k] = true 
-    _.keys(res)).property('rows.@each')
+    _.keys(res)).property('rows.@each').cacheable()
 
   fields: (->
     res = @$fieldsFromRows
@@ -51,6 +80,13 @@ app.Table = Em.Object.extend
     @$addlFields.pushObject(col)
     @setFormula(col,form) if isPresent(form)
 
+  addRelation: (otherTable, formula) -> 
+    r = app.Relation.create(baseTable: this, otherTableName: otherTable, formula: formula)
+    @$relations.push r
+
+  formulaParser: ->
+    @cachedParser ||= Eval.getFormulaParser(vars: @$fields)
+
   toJson: ->
     res = {}
     res.formulas = @$formulas.$fieldHash
@@ -63,6 +99,8 @@ app.Table = Em.Object.extend
     @setFormula(k,v) for k,v of raw.formulas
     @addColumn(f) for f in raw.addlFields
     @addRow(row) for row in raw.rows
+
+
 
 app.Table.load = ->
   raw = $.jStorage.get('table')

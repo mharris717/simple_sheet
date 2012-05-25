@@ -2,12 +2,31 @@ describe 'Stuff', ->
   it 'smoke', ->
     expect(window.App).toBeDefined()
 
+  describe 'widgets', ->
+    row = table = lastRow = null
+    beforeEach ->
+      workspace = getWorkspace()
+      table = workspace.$tables.$content[1]
+      row = table.$rows.$content[0]
+      lastRow = table.$rows.$content[2]
+      table.setupAll()
+
+    it 'smoke', ->
+      expect(row.getCellValue('price')).toEqual(20)
+
+    it 'relation', ->
+      res = row.evalInContext("$depts.min_prc")
+      expect(res).toEqual(50)
+
+    it 'relation2', ->
+      res = lastRow.evalInContext("$depts.min_prc")
+      expect(res).toEqual(100)
+
   describe 'real stuff', ->
     row = h = bavg = table = null
     beforeEach ->
       workspace = getWorkspace()
       table = workspace.$tables.$content[0]
-      window.table = table
       row = table.$rows.$content[0]
       h = row.cellForField('h')
       bavg = row.cellForField('bavg')
@@ -37,6 +56,11 @@ describe 'Stuff', ->
         it "bavg changes when formula changes", ->
           bavg.set('rawValue',"=h/ab*2")
           expect(bavg.$value).toEqual(0.629)
+
+        it 'long', ->
+          for i in [0...10]
+            #Ember.run ->
+            h.set 'rawValue', i
 
       describe "column formula", ->
         it 'should change cell value', ->
@@ -69,6 +93,11 @@ describe 'Stuff', ->
     describe "row from another table", ->
       it 'smoke', ->
         expect(row.rowFromTable('widgets')).toBeDefined()
+
       it 'formula', ->
-        formula = "=$widgets"
+        formula = "$widgets.price * pa"
+        res = row.evalInContext(formula)
+        expect(res).toEqual(20*600)
+
+
 

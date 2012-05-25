@@ -5,7 +5,7 @@ makeBaseObj = (ops) ->
 describe "grammar", ->
   it "smoke2", ->
     grammar = mathGrammar()
-    parser = PEG.buildParser(grammar)
+    parser = Eval.buildParser(grammar)
     res = parser.parse("2+2*7")
     expect(res).toEqual(16)
 
@@ -38,7 +38,11 @@ describe "grammar", ->
 
     describe 'table vars', ->
       beforeEach ->
-        base.rowForTable = (t) -> makeBaseObj(target: 500)
+        base.rowFromTable = (t) -> 
+          if t == 'depts'
+            makeBaseObj(target: 500)
+          else
+            throw "unknown table"
 
       it 'smoke', ->
         str = "$depts.target * price"
@@ -58,4 +62,23 @@ describe "grammar", ->
       f = -> this.a+3
       res = instanceEval(base,f)
       expect(res).toEqual(17)
+
+  describe "basic js", ->
+    base = null
+    beforeEach ->
+      base = makeBaseObj(price: 50, cost: 30, tax_rate: 0.1)
+
+    it 'tertiary if', ->
+      str = "true ? price : 17"
+      parsed = Eval.getFormulaParser(vars: ['price','tax_rate']).myParse(str)
+      res = instanceEval(base,parsed)
+      expect(res).toEqual(50)
+
+    it 'coffee if', ->
+      str = "if true then price else 17"
+      parsed = Eval.getFormulaParser(vars: ['price','tax_rate']).myParse(str)
+      res = Eval.multiEval(base,parsed)
+      expect(res).toEqual(50)
+
+
 

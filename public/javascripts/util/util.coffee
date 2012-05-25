@@ -1,3 +1,28 @@
+window.Memoize = {
+  logs: {}
+
+  print: ->
+    for f,log of @logs
+      console.debug "#{log.name} #{log.count} #{log.freshCount}"
+
+  memoize: (f,n) ->
+    log = @logs[f] = {count: 0, freshCount: 0, results: {}, ran: {}, name: n}
+    (arg) ->
+      log.count += 1
+      if log.ran[arg]
+        log.results[arg]
+      else
+        fresh = f(arg)
+        log.freshCount += 1
+        log.results[arg] = fresh
+        log.ran[arg] = true
+        fresh
+}
+
+Function.prototype.memoized = (n) ->
+  Memoize.memoize(this,n)
+  
+
 jQuery.ajaxSetup({async:true});
 getRemoteJsonInner = (url,f,retryOnError=true) ->
   #smeDebug("starting #{url}")
@@ -130,7 +155,7 @@ window.onlyOnceFunc = (f) ->
     f() if times == 0
     times += 1
 
-window.isBlank = (obj) ->
+window.isBlank = ((obj) ->
   if !obj
     true
   else if obj == ''
@@ -138,7 +163,7 @@ window.isBlank = (obj) ->
   else if obj.trim && obj.trim() == ''
     true
   else
-    false
+    false).memoized('isBlank')
 
 window.isPresent = (obj) ->
   !isBlank(obj)
@@ -159,3 +184,18 @@ window.mySetTimeout = (a,b) ->
     func()
   else
     setTimeout func,time
+
+String.prototype.scan = (reg,pos) ->
+  pos ||= 0
+  reg = new RegExp(reg) unless reg.exec
+  res = reg.exec(this,pos)
+  if res
+    i = res.index + res[0].length + 1
+    throw "same index #{i} res #{res} this #{this} reg #{reg}" if i == pos
+    if i >= @length
+      [res[0]]
+    else
+      [res[0]].concat(@substr(i,999).scan(reg))
+  else
+    []
+

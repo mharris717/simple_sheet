@@ -10,12 +10,23 @@ window.makeFreshTable = ->
 
 window.makeWidgetTable = ->
   t = app.Table.create(name: 'widgets')
-  t.setFormula 'mperc',"=(dept == 'Toys') ? 0.5 : 0.2"
-  t.setFormula 'm2', "=if dept == 'Toys' then 0.5 else 0.2"
+  t.setFormula 'mperc',"=if dept == 'Toys' then 0.5 else 0.2"
+  #t.setFormula 'm2', "=if dept == 'Toys' then 0.5 else 0.2"
   t.setFormula 'margin','=mperc*price'
+  t.setFormula 'above_min', "=if $widgets.price > $depts.min_prc then 'Yes' else 'No '+$widgets.price+' '+$depts.min_prc"
 
   t.addRow(name: 'Elmo', dept: 'Toys', price: 20)
   t.addRow(name: 'Nintendo', dept: 'Toys', price: 200)
   t.addRow(name: 'Lawnmower', dept: 'Lawn', price: 500)
 
+
+
+  t.addRelation "depts", "$widgets.dept == $depts.name"
+
+  t
+
+window.makeDeptTable = ->
+  t = app.Table.create(name: 'depts')
+  t.addRow(name: 'Toys', min_prc: 50)
+  t.addRow(name: 'Lawn', min_prc: 100)
   t

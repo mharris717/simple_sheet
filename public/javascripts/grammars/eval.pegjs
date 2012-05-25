@@ -8,7 +8,7 @@ var
   = v:possibleVar { return "this.getCellValue(\'" + v + "\')" }
 
 table
-  = "$" name:[a-z]+ { return "this.rowForTable(\'" + name + "\')" }
+  = "$" name:[a-z]+ { return "this.rowFromTable(\'" + name.join("") + "\')" }
 
 possibleVar
   = "price" / "cost" '}

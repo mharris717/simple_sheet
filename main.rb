@@ -61,6 +61,9 @@ def generate_coffee_all!
   Dir["**/*.coffee"].each do |f|
     generate_coffee!(f)
   end
+  Dir["**/*.pegjs"].each do |f|
+    generate_pegjs!(f)
+  end
 end
 
 #generate_coffee_all!
