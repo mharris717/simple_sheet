@@ -1,3 +1,24 @@
+app.CompositeRow = Ember.Object.extend
+  init: ->
+    #@setSums()
+
+  setSums: ->
+    for field in @$rows[0].$table.$fields
+      val = 0
+      for row in @$rows
+        val += row.getCellValue(field)
+      @set field, val
+
+  cellsForField: (f) ->
+    _.map @$rows, (row) -> row.cellForField(f)
+
+  getCellValue: (f) ->
+    #@get(f)
+    val = 0
+    for row in @$rows
+      val += row.getCellValue(f)
+    val
+
 app.Row = Ember.Object.extend
   init: ->
     logger.debug 'made a row'
@@ -19,12 +40,11 @@ app.Row = Ember.Object.extend
     @$cellsInner).property('cellsInner').cacheable()
 
   cellForField: (f) ->
-    #@$cellsInner.find( (cell) -> cell.$field == f )
     @$cellHash[f]
 
   getCellValue: (f) ->
     cell = @cellForField(f)
-    throw "no cell #{f} #{@$table.$name} " + @$fields.join(",") unless cell
+    throw "no cell #{f} in table #{@$table.$name} " + (if @$fields then @$fields.join(",") else "") unless cell
     logger.log "got #{cell.$value} for #{f}"
     res = cell.$value
     res = parseFloat(res) if res.match && res.match(/^[0-9]+$/)
@@ -42,40 +62,7 @@ app.Row = Ember.Object.extend
     try
       res = Eval.evalFormula(this,rawStr,@$table.formulaParser())
     catch error
-      res = 'error'
-    res
-      
-  evalInContextf: (rawStr) ->
-    logger.debug "evalInContext #{rawStr}"
-    str = rawStr
-
-    for cell in _.sortBy(@$cells, (obj) -> obj.$field.length).reverse()
-      f = cell.$field
-      str = str.replace(f,"{{#{f}}}")
-
-    subVars = (withBrackets) =>
-      for cell in @$cells
-        f = ff = cell.$field
-        ff = "{{#{ff}}}" if withBrackets
-        if str.match(ff)
-          val = "this.getCellValue('#{f}')"
-          str = str.replace(ff,val)
-
-    subTableCall = (name) =>
-      str = str.replace "$#{name}","this.rowFromTable('#{name}')"
-
-    subVars(true)
-    #subVars(false)
-
-    subTableCall('widgets')
-
-    res = null
-    try
-      res = eval(str)
-    catch error
-      res = "eval error for #{rawStr} -> #{str}"
-
-    logger.log "evaled #{rawStr} -> #{str} -> #{res}"
+      res = 'error ' + error
     res
 
   toJson: ->
@@ -87,10 +74,19 @@ app.Row = Ember.Object.extend
     if name == @$table.$name
       this
     else
-      relation = @$table.$relations[0]
+      relation = @$table.$relations.getForTable(name)
       if relation
-        relation.getRow(this)
+        rows = relation.getRows(this)
+        if !rows
+          throw "getRows returned garbage"
+        else if rows.length > 1
+          app.CompositeRow.create(rows: rows)
+        else if rows.length == 1
+          rows[0]
+        else
+          undefined
       else
-        c = @$$table.$$workspace.getTable(name).$$rows.$$content
-        c[0]
+        undefined
+        #c = @$$table.$$workspace.getTable(name).$$rows.$$content
+        #c[0]
 

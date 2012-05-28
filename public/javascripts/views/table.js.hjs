@@ -1,14 +1,32 @@
-<table class='main'>
-  <tr>
-    {{#each table.columns}}
-      <th>
-        {{view App.ColumnHeaderView column=this}}
-      </th>
+<div class='table'>
+
+  <div class='name'>
+    {{view ConvertingTextField
+    valueBinding="table.name"}}
+  </div>
+
+  <table class='main'>
+    <tr>
+      {{#each table.columns}}
+        <th>
+          {{view App.ColumnHeaderView column=this}}
+        </th>
+      {{/each}}
+      {{view App.NewColumnHeaderView table=table}}
+    </tr>
+    {{#each table.rows}}
+      {{view App.RowView row=this}}
     {{/each}}
-    {{view App.NewColumnHeaderView table=table}}
-  </tr>
-  {{#each table.rows}}
-    {{view App.RowView row=this}}
-  {{/each}}
-  {{view App.NewRowView table=table}}
-</table>
+    {{view App.NewRowView table=table}}
+  </table>
+
+  <div class='settings'>
+    <ul>
+      <li><a href='#deleteTable' {{action "delete"}}>Delete Table</a></li>
+    </ul>
+  </div>
+
+  <div class='settings-icon'>
+    <img {{action "showSettings" on="click"}} src="images/black-gear-icon.gif" width=30px height=24px>
+  </div>
+</div>

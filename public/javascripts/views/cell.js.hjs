@@ -3,6 +3,10 @@
     {{view Ember.TextField
     valueBinding="cell.rawValue"}}
   {{else}}
-    {{value}}
+    {{#if value}}
+      {{value}}
+    {{else}}
+      __
+    {{/if}}
   {{/if}}
 </div>

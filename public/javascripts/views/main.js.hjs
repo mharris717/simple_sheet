@@ -1,3 +1,5 @@
-{{view App.WorkspaceView workspaceBinding="App.workspace"}}
+{{view App.HeaderView}}
+
+{{view App.WorkspaceView workspaceBinding="App.workspaces.current"}}
 
 <div id="log"></div>

@@ -9,7 +9,7 @@ app.Cell = Ember.Object.extend
     #@rawValueChanged()
     #,1001
     
-  recalc: ->
+  recalcOld: ->
     logger.debug "recalc for #{@$field}"
     v = @$rawValue
     if isPresent(v)
@@ -20,6 +20,8 @@ app.Cell = Ember.Object.extend
     else
       @set('rawValue',""+v+" ")
 
+  recalc: ->
+    @notifyPropertyChange('rawValue')
 
   deps: ->
     v = @$rawValueOrFormula
@@ -51,7 +53,13 @@ app.Cell = Ember.Object.extend
       arr = full.substr(1,999).split(".")
       table = arr[0]
       field = arr[1]
-      foreign.push @$row.rowFromTable(table).cellForField(field)
+
+      foreignRow = @$row.rowFromTable(table)
+      throw "no row for #{table}" unless foreignRow
+      if foreignRow.cellsForField
+        foreign = foreign.concat(foreignRow.cellsForField(field))
+      else
+        foreign.push foreignRow.cellForField(field)
 
     #logger.log "depCells for #{@$field} #{res.length} #{@$row.$cells.length} #{@deps().length}"
     res.concat(foreign)

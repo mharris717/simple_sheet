@@ -57,6 +57,10 @@ window.Eval = {
     parser = if fields.parse then fields else @getFormulaParser(vars: fields)
     parsed = parser.myParse(rawStr)
     logger.log "raw #{rawStr}\nparsed #{parsed}"
-    @multiEval(obj,parsed)
+    
+    try
+      @multiEval(obj,parsed)
+    catch error
+      throw "parsed #{rawStr} into #{parsed} | #{error}"
 
 }

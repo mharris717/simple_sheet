@@ -9,30 +9,7 @@ app.Formulas = Ember.Object.extend
   fields: ->
     _.keys(@$fieldHash)
 
-RelationOption = Em.Object.extend
-  rowFromTable: (t) ->
-    res = @$rows[t]
 
-  fields: ->
-    @$$relation.$$baseTable.$$workspace.$$fields
-
-  matches: (str) ->
-    Eval.evalFormula(this,str,@fields())
-
-app.Relation = Em.Object.extend
-  # baseTable, otherTableName, formula
-  otherTable: -> @$$baseTable.$$workspace.getTable(@$$otherTableName)
-
-  getRow: (baseRow) ->
-    res = null
-    for otherRow in @otherTable().$rows.$content
-      if !res
-        rows = {}
-        rows[@$baseTable.$name] = baseRow
-        rows[@$otherTableName] = otherRow
-        option = RelationOption.create(relation: this, rows: rows)
-        res = otherRow if option.matches(@$formula)
-    res
 
 
 app.Table = Em.Object.extend
@@ -41,7 +18,7 @@ app.Table = Em.Object.extend
     @set('formulas',app.Formulas.create())
     @set('addlFields',Ember.ArrayController.create(content: []))
     @set('saveName','abc')
-    @set 'relations', []
+    @set 'relations', App.Relations.create(table: this)
     #@setupAll()
 
   save: -> 4
@@ -81,8 +58,7 @@ app.Table = Em.Object.extend
     @setFormula(col,form) if isPresent(form)
 
   addRelation: (otherTable, formula) -> 
-    r = app.Relation.create(baseTable: this, otherTableName: otherTable, formula: formula)
-    @$relations.push r
+    @$relations.add otherTable, formula
 
   formulaParser: ->
     @cachedParser ||= Eval.getFormulaParser(vars: @$fields)
@@ -101,6 +77,15 @@ app.Table = Em.Object.extend
     @addRow(row) for row in raw.rows
 
 
+app.TableView = Em.View.extend
+  templateName: "views_table"
+  workspaceBinding: "table.workspace"
+
+  delete: (e) ->
+    @$workspace.removeTable(@$table)
+
+  showSettings: (e) ->
+    this.$('.settings').show()
 
 app.Table.load = ->
   raw = $.jStorage.get('table')

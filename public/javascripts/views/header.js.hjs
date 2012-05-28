@@ -1,0 +1,19 @@
+<div id='header'>
+
+  <img {{action "showSettings" on="click"}} src="images/black-gear-icon.gif" width=30px height=24px>
+
+  Current Workspace: {{view ConvertingSelect 
+    contentBinding = "App.workspaces.content" 
+    selectionBinding="App.workspaces.current"
+    optionLabelPath="content.name"
+    optionValuePath="content.name"
+  }}
+
+  <div class='settings'>
+    <ul>
+      <li><a href='#newTable' {{action "newTable"}}>New Table</a></li>
+    </ul>
+  </div>
+
+  
+</div>

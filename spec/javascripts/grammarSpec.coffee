@@ -25,16 +25,10 @@ describe "grammar", ->
       expect(res).toEqual(54)
 
     it 'formula vars', ->
-      str = "tax_rate * price"
-      parsed = Eval.getFormulaParser(vars: ['price','tax_rate']).myParse(str)
-      res = instanceEval(base,parsed)
-      expect(res).toEqual(5)
+      expect("tax_rate * price").toEvalTo(5,base: base, vars: ['tax_rate','price'])
 
     it 'formula vars with overlap', ->
-      str = "tax_rate * price"
-      parsed = Eval.getFormulaParser(vars: ['tax','price','tax_rate']).myParse(str)
-      res = instanceEval(base,parsed)
-      expect(res).toEqual(5)
+      expect("tax_rate * price").toEvalTo(5,base: base, vars: ['tax','price','tax_rate'])
 
     describe 'table vars', ->
       beforeEach ->
@@ -69,16 +63,26 @@ describe "grammar", ->
       base = makeBaseObj(price: 50, cost: 30, tax_rate: 0.1)
 
     it 'tertiary if', ->
-      str = "true ? price : 17"
-      parsed = Eval.getFormulaParser(vars: ['price','tax_rate']).myParse(str)
-      res = instanceEval(base,parsed)
-      expect(res).toEqual(50)
+      expect("true ? price : 17").toEvalTo(50, base: base, vars: ['price','tax_rate'])
 
     it 'coffee if', ->
-      str = "if true then price else 17"
-      parsed = Eval.getFormulaParser(vars: ['price','tax_rate']).myParse(str)
-      res = Eval.multiEval(base,parsed)
-      expect(res).toEqual(50)
+      expect("if true then price else 17").toEvalTo(50, base: base, vars: ['price','tax_rate'])
 
+  describe "proper variable parsing", ->
+    base = null
+    beforeEach ->
+      base = makeBaseObj(ab: 100, h: 25)
+
+    it 'can eval bavg', ->
+      expect("h/ab").toEvalTo(0.25, base: base, vars: ['h','ab'])
+
+    it 'can eval formula with h in it', ->
+      expect("if true then 2 else 3").toEvalTo(2,base: base, vars: ['h','ab'])
+
+    it 'can eval formula with h in it 2', ->
+      expect("if true then 'hit' else 'miss'").toEvalTo('hit',base: base, vars: ['h','ab'])
+
+    it 'can eval formula with h in it 2', ->
+      expect("if true then 'h_z' else 'miss'").toEvalTo('h_z',base: base, vars: ['h','ab'])
 
 

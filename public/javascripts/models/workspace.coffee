@@ -6,9 +6,17 @@ app.Workspace = Em.Object.extend
     t.set 'workspace', this
     @$tables.pushObject(t)
 
-  getTable: (n) ->
+  removeTable: (t) ->
+    @$tables.removeObject(t)
+
+  newTable: ->
+    t = app.Table.create()
+    #t.addRow {a: 2}
+    @addTable(t)
+
+  getTable: (n,safe=true) ->
     res = @$tables.$content.filter((obj) -> obj.$name == n)[0]
-    throw "no table #{n}" unless res
+    throw "no table #{n}" if !res && safe
     res
 
   fields: (->
@@ -20,9 +28,18 @@ app.Workspace = Em.Object.extend
     for table in @$tables
       table.setupAll()
 
-window.getWorkspace = ->
-  w = app.Workspace.create()
+
+
+window.getWorkspaces = ->
+  w = app.Workspace.create(name: 'Baseball')
   w.addTable makeFreshTable()
-  w.addTable makeWidgetTable()
-  w.addTable makeDeptTable()
-  w
+  w.addTable makePlayersTable()
+
+  w2 = app.Workspace.create(name: 'WidgetCorp')
+  w2.addTable makeWidgetTable()
+  w2.addTable makeDeptTable()
+  
+  [w,w2]
+
+app.set 'workspaces', Em.ArrayController.create
+  content: getWorkspaces()

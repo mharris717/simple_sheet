@@ -71,13 +71,23 @@ app.NewRowView = Ember.View.extend
 app.WorkspaceView = Em.View.extend
   templateName: "views_workspace"
 
-app.TableView = Em.View.extend
-  templateName: "views_table"
+  newTable: (e) ->
+    @$workspace.newTable()
+
+app.HeaderView = Em.View.extend
+  workspaceBinding: "App.workspaces.current"
+  templateName: "views_header"
+
+  newTable: (e) ->
+    @$workspace.newTable()
+
+  showSettings: (e) ->
+    this.$('.settings').show()
 
 $ ->  
   #t = makeFreshTable()
   #t.save()
-  app.set 'workspace', getWorkspace()
+  #app.set 'workspace', getWorkspace()
   #app.set 'table', makeFreshTable()
   #app.set 'table', app.Table.load()
   unless testMode

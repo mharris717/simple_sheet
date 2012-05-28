@@ -1,0 +1,25 @@
+.table {
+  background-color: #EBF0F0;
+  padding: 10px;
+  margin: 5px;
+}
+
+.table .name {
+  font-size: 20px;
+  padding: 5px;
+  font-family: Verdana;
+}
+
+.table .settings {
+  float: right;
+  position: relative;
+  bottom: 100px;
+  display: none;
+}
+
+.table .settings-icon {
+  float: right;
+  position: relative;
+  bottom: 20px;
+  left: 50px;
+}

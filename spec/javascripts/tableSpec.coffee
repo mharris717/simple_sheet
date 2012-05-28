@@ -4,28 +4,78 @@ describe 'Stuff', ->
 
   describe 'widgets', ->
     row = table = lastRow = null
+    
+    describe "from widgets table", ->
+      beforeEach ->
+        workspace = getWorkspaces()[1]
+        table = workspace.$tables.$content[0]
+        row = table.$rows.$content[0]
+        lastRow = table.$rows.$content[2]
+        table.setupAll()
+
+      it 'smoke', ->
+        expect(row.getCellValue('price')).toEqual(20)
+
+      it 'relation', ->
+        res = row.evalInContext("$depts.min_prc")
+        expect(res).toEqual(50)
+
+      it 'relation2', ->
+        res = lastRow.evalInContext("$depts.min_prc")
+        expect(res).toEqual(100)
+
+    describe "from depts table", ->
+      beforeEach ->
+        workspace = getWorkspaces()[1]
+        table = workspace.$tables.$content[1]
+        row = table.$rows.$content[0]
+        lastRow = table.$rows.$content[1]
+        table.setupAll()
+ 
+      it 'phantom table returns no row', ->
+        expect(row.rowFromTable('sdfsdf')).toBeUndefined()
+
+      it 'works other direction', ->
+        expect(row.rowFromTable('widgets')).toBeDefined()
+
+
+  describe 'sum across relation', ->
+    row = players = stats = null
     beforeEach ->
-      workspace = getWorkspace()
-      table = workspace.$tables.$content[1]
-      row = table.$rows.$content[0]
-      lastRow = table.$rows.$content[2]
-      table.setupAll()
+      workspace = getWorkspaces()[0]
+      stats = workspace.$tables.$content[0]
+      players = workspace.$tables.$content[1]
 
-    it 'smoke', ->
-      expect(row.getCellValue('price')).toEqual(20)
+      players.addColumn 'pa', '=$stats.pa'
 
-    it 'relation', ->
-      res = row.evalInContext("$depts.min_prc")
-      expect(res).toEqual(50)
+      row = players.$rows.$content[0]
 
-    it 'relation2', ->
-      res = lastRow.evalInContext("$depts.min_prc")
-      expect(res).toEqual(100)
+      players.setupAll()
 
-  describe 'real stuff', ->
+    it 'should sum', ->
+      res = row.evalInContext("$stats.hr")
+      expect(res).toEqual(40)
+
+    it 'should sum 2', ->
+      res = row.getCellValue('pa')
+      expect(res).toEqual(1200)
+
+    describe 'new stats now', ->
+      beforeEach ->
+        row.getCellValue('pa')
+        stats.addRow(name: 'Ted Williams', year: 1957, pa: 600, hr: 10)
+
+        players.setupAll()
+
+      it 'should sum to new value', ->
+        res = row.getCellValue('pa')
+        expect(res).toEqual(1800)
+
+
+  describe 'baseball', ->
     row = h = bavg = table = null
     beforeEach ->
-      workspace = getWorkspace()
+      workspace = getWorkspaces()[0]
       table = workspace.$tables.$content[0]
       row = table.$rows.$content[0]
       h = row.cellForField('h')
@@ -82,22 +132,23 @@ describe 'Stuff', ->
 
       describe "new column", ->
         it 'something', ->
-          table.addColumn('iso',"=slg-bavg")
           table = makeFreshTable()
-          window.table = table
+          table.addColumn('iso',"=slg-bavg")
           row = table.$rows.$content[0]
-          Ember.run ->
-            #expect(row.cellForField('iso').$value).toEqual(0.151)
+          expect(row.getCellValue('iso')).toEqual(0.151)
 
 
     describe "row from another table", ->
       it 'smoke', ->
-        expect(row.rowFromTable('widgets')).toBeDefined()
+        expect(row.rowFromTable('players')).toBeDefined()
 
       it 'formula', ->
-        formula = "$widgets.price * pa"
+        formula = "if $players.side == 'L' then 10 else 20"
         res = row.evalInContext(formula)
-        expect(res).toEqual(20*600)
+        expect(res).toEqual(10)
+
+      describe "multiple related rows", ->
+
 
 
 
