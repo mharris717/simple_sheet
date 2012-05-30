@@ -23,3 +23,7 @@
   bottom: 20px;
   left: 50px;
 }
+
+.table .settings .load-csv {
+  display: none;
+}

@@ -7,8 +7,6 @@ RelationOption = Em.Object.extend
 
   matches: (str) ->
     res = Eval.evalFormula(this,str,@fields())
-    console.debug "matches #{res} #{str}"
-    console.debug @$rows
     res
 
 app.Relation = Em.Object.extend
@@ -29,6 +27,13 @@ app.Relation = Em.Object.extend
     throw "something wrong no table" unless res
     res
 
+  toJson: ->
+    {otherTableName: @$otherTableName, formula: @$formula, baseTableName: @$baseTable.$name}
+
+  hydrate: (raw) ->
+    @set k,v for k,v of raw
+
+
 
   getRows: (baseRow) ->
     res = []
@@ -37,8 +42,6 @@ app.Relation = Em.Object.extend
         rows = {}
         rows[baseRow.$table.$name] = baseRow
         rows[otherRow.$table.$name] = otherRow
-        console.debug baseRow.$table.$name
-        console.debug rows
         option = RelationOption.create(relation: this, rows: rows)
         res.push(otherRow) if option.matches(@$formula)
     res
@@ -48,6 +51,8 @@ app.Relations = Em.ArrayController.extend
     @set 'content', []
 
   add: (otherTable, formula) ->
+    throw "no table" if isBlank(otherTable)
+    throw "no formula" if isBlank(formula)
     ops = {baseTable: @$table, otherTableName: otherTable, formula: formula}
     r = app.Relation.create(ops)
     @pushObject r
@@ -57,9 +62,18 @@ app.Relations = Em.ArrayController.extend
       return rel if rel.$otherTableName == name
 
     if bothDirections
+      throw "no table" if isBlank(@$table)
+      throw "no workspace" if isBlank(@$table.$workspace)
       t = @$table.$workspace.getTable(name,false)
       if t
-        res = t.$relations.getForTable(@$table.$name)
+        res = t.$relations.getForTable(@$table.$name,false)
         return res if res
 
     undefined
+
+  relatedTables: ->
+    res = []
+    if @$table.$workspace
+      for table in @$$table.$$workspace.$$tables.$$content
+        res.push(table) if @getForTable(table.$name)
+    res

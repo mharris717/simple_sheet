@@ -47,7 +47,10 @@ window.ConvertingSelect = Ember.Select.extend
 #  classNames: ['ember-text-area','converting']
 
 setInterval ->
-  $('input.converting').convertingTextField()
-  $('textarea.converting').convertingTextField()
-  $('select.converting').convertingTextField()
+  try
+    $('input.converting').convertingTextField()
+    $('textarea.converting').convertingTextField()
+    $('select.converting').convertingTextField()
+  catch error
+    a=2
 ,500

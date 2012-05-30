@@ -17,11 +17,12 @@ app.Table = Em.Object.extend
     @set('rows',Ember.ArrayController.create(content: []))
     @set('formulas',app.Formulas.create())
     @set('addlFields',Ember.ArrayController.create(content: []))
-    @set('saveName','abc')
     @set 'relations', App.Relations.create(table: this)
     #@setupAll()
 
   save: -> 4
+
+  saveName: -> @$name
 
   setFormula: (k,v) ->
     @$formulas.setFormula(k,v)
@@ -30,7 +31,7 @@ app.Table = Em.Object.extend
     res = {}
     for row in @$rows.$content
       for own k,v of row
-        if k != '_super' && k != 'table'
+        if k != '_super' && k != 'table' && !k.match(/binding$/i)
           res[k] = true 
     _.keys(res)).property('rows.@each').cacheable()
 
@@ -38,6 +39,12 @@ app.Table = Em.Object.extend
     res = @$fieldsFromRows
     res = res.concat(@$addlFields.$content)
     _.uniq(res)).property('fieldsFromRows','addlFields.@each')
+
+  fieldsForParser: ->
+    res = @$fields
+    for table in @$relations.relatedTables()
+      res = res.concat(table.$fieldsFromRows)
+    _.uniq(res)
 
   columns: (->
     app.Column.create(table: this, field: f) for f in @$fields).property('fields')
@@ -47,11 +54,14 @@ app.Table = Em.Object.extend
     row = app.Row.create(h)
     row.set('table',this)
     @$rows.pushObject(row)
+    row
 
   setupAll: ->
+    logger.log "setupAll"
     for row in @$rows.$content
       for cell in row.$cells
         cell.setupObservers()
+        cell.recalc()
 
   addColumn: (col,form) ->
     @$addlFields.pushObject(col)
@@ -61,20 +71,36 @@ app.Table = Em.Object.extend
     @$relations.add otherTable, formula
 
   formulaParser: ->
-    @cachedParser ||= Eval.getFormulaParser(vars: @$fields)
+    @cachedParser ||= Eval.getFormulaParser(vars: @fieldsForParser())
+
+  countCell: (->
+    @$rows.$content.length).property('rows.@each')
 
   toJson: ->
     res = {}
     res.formulas = @$formulas.$fieldHash
-    res.addlFields = @$addlFields.$content
-    res.rows = []
-    res.rows.push(row.toJson()) for row in @$rows.$content
+    res.addlFields = @$addlFields.toJson()
+    res.rows = @$rows.toJson()
+    res.relations = @$relations.toJson()
+    res.name = @$name
     res
 
   hydrate: (raw) ->
+    @set 'name', raw.name
     @setFormula(k,v) for k,v of raw.formulas
     @addColumn(f) for f in raw.addlFields
     @addRow(row) for row in raw.rows
+    @addRelation row.otherTableName, row.formula for row in raw.relations
+
+
+  loadCSV: (csv) ->
+    #csv = escape(csv)
+    $.post "/convert", {body: csv}, (rows) =>
+      console.debug "csv #{rows.length} for #{@$name}"
+      @addRow(row) for row in rows
+      console.debug 'saving csv'
+      SimpleSave.save(this)
+    ,'json'
 
 
 app.TableView = Em.View.extend
@@ -86,6 +112,38 @@ app.TableView = Em.View.extend
 
   showSettings: (e) ->
     this.$('.settings').show()
+
+  showCSV: (e) ->
+    this.$('.load-csv').show()
+
+  loadCSV: (e) ->
+    @$table.loadCSV @$csvContent
+    this.$('.load-csv').hide()
+    this.$('.settings').hide()
+
+  mouseDown: (e) ->
+    console.debug "mouseDown t"
+    console.debug e
+
+  mousedown: (e) ->
+    console.debug "mouse down"
+    console.debug e
+
+  rightClick: (e) ->
+    console.debug "mouse down"
+    console.debug e
+
+  rightclick: (e) ->
+    console.debug "mouse down"
+    console.debug e
+
+  altclick: (e) ->
+    console.debug "mouse down"
+    console.debug e
+
+  altClick: (e) ->
+    console.debug "mouse down"
+    console.debug e
 
 app.Table.load = ->
   raw = $.jStorage.get('table')

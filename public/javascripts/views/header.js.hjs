@@ -12,6 +12,7 @@
   <div class='settings'>
     <ul>
       <li><a href='#newTable' {{action "newTable"}}>New Table</a></li>
+      <li><a href='#makeFresh' {{action "makeFresh"}}>Make Fresh</a></li>
     </ul>
   </div>
 

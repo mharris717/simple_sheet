@@ -36,3 +36,23 @@ end
 get "/" do
   haml :index
 end
+
+get "/convert" do
+  require 'net/http'
+  uri = URI('http://importeverything.heroku.com')
+  ps = {:body => params[:body]}
+  uri.query = URI.encode_www_form(ps)
+
+  res = Net::HTTP.get_response(uri)
+  res.body
+end
+
+post "/convert" do
+  require 'net/http'
+  uri = URI('http://importeverything.heroku.com')
+  ps = {:body => params[:body]}
+  uri.query = URI.encode_www_form(ps)
+
+  res = Net::HTTP.get_response(uri)
+  res.body
+end

@@ -5,65 +5,14 @@ app.Cell = Ember.Object.extend
   tableBinding: "row.table"
   init: ->
     logger.debug "making a cell " + @$field
-    #setTimeout =>
-    #@rawValueChanged()
-    #,1001
-    
-  recalcOld: ->
-    logger.debug "recalc for #{@$field}"
-    v = @$rawValue
-    if isPresent(v)
-      v = if v == v.trim() then ""+v+" " else v.trim()
-      @set('rawValue',v)
-    else if !v
-      @set('rawValue'," ")
-    else
-      @set('rawValue',""+v+" ")
 
   recalc: ->
+    #logger.log 'recalc'
     @notifyPropertyChange('rawValue')
 
-  deps: ->
-    v = @$rawValueOrFormula
-    if v && v.match
-      @$row.$table.$fields.filter (f) => v.match(f)
-    else
-      []
-
-  foreignDeps: ->
-    logger.debug "foreignDeps call"
-    if false
-      []
-    else
-      v = @$rawValueOrFormula
-      if v && v.match
-        res = v.scan(/\$[a-z_]+\.[a-z_]+/)
-        logger.debug res
-        res || []
-      else
-        []
-
-  depCells: ->
-    deps = @deps()
-    res = @$row.$cellsInner.filter (cell) => _.include(deps,cell.$field)
-
-    foreign = []
-    for full in @foreignDeps()
-      logger.debug "doing foreign"
-      arr = full.substr(1,999).split(".")
-      table = arr[0]
-      field = arr[1]
-
-      foreignRow = @$row.rowFromTable(table)
-      throw "no row for #{table}" unless foreignRow
-      if foreignRow.cellsForField
-        foreign = foreign.concat(foreignRow.cellsForField(field))
-      else
-        foreign.push foreignRow.cellForField(field)
-
-    #logger.log "depCells for #{@$field} #{res.length} #{@$row.$cells.length} #{@deps().length}"
-    res.concat(foreign)
-    
+  recalcSpecial: ->
+    #logger.log "recalc special"
+    @notifyPropertyChange('rawValue')
 
   res = (Ember.computed (k,v) ->
     f = @$field
@@ -91,13 +40,13 @@ app.Cell = Ember.Object.extend
 
     res = if res && res.substr && res.substr(0,1) == '='
       rest = res.substr(1,999)
-      logger.log "eval #{@$field} | #{rest}"
+      logger.debug "eval #{@$field} | #{rest}"
       res = row.evalInContext(rest)
       res = roundNumber(res,3) if _.isNumber(res)
       res
     else
       res
-    logger.log "value call for #{@$field} res #{res}"
+    #logger.log "value call for #{@$field} res #{res}"
     res).property('rawValue').cacheable()
 
   areObserversSetup: false
@@ -107,13 +56,8 @@ app.Cell = Ember.Object.extend
       @areObserversSetup = true
       
   setupObservers: ->
-    me = this
-    for cell in @depCells()
-      logger.debug "adding observer from #{@$field} to #{cell.$field}"
-      cell.removeObserver 'value',me,@recalc
-      cell.addObserver 'value',me,@recalc
-    @$row.$table.$formulas.removeObserver @$field, me, @recalc
-    @$row.$table.$formulas.addObserver @$field, me, @recalc
+    d = app.CellDeps.create(cell: this, value: @$rawValueOrFormula)
+    d.setupObservers()
 
   triggerSave: ->
     @$table.save()
@@ -123,10 +67,3 @@ app.Cell = Ember.Object.extend
    @triggerSave() unless testMode
   ).observes('rawValue')
 
-app.Column = Ember.Object.extend
-  formula: ((k,v) ->
-    if arguments.length == 1
-      @$table.$formulas.get(@$field)
-    else
-      @$table.setFormula(@$field,v)
-      v).property('table.formulas')

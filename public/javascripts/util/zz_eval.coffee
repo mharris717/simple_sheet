@@ -32,7 +32,7 @@ window.Eval = {
     @createParser(grammar)
 
   evalWrap: (str,obj) -> 
-    logger.log "evaling #{str}"
+    logger.debug "evaling #{str}"
     if obj
       (-> eval(str)).apply(obj)
     else
@@ -56,11 +56,12 @@ window.Eval = {
   evalFormula: (obj,rawStr,fields) ->
     parser = if fields.parse then fields else @getFormulaParser(vars: fields)
     parsed = parser.myParse(rawStr)
-    logger.log "raw #{rawStr}\nparsed #{parsed}"
+    #logger.log "raw #{rawStr}\nparsed #{parsed}"
     
-    try
-      @multiEval(obj,parsed)
-    catch error
-      throw "parsed #{rawStr} into #{parsed} | #{error}"
+    #try
+    @multiEval(obj,parsed)
+    #catch error
+    #  throw error
+      #throw "parsed #{rawStr} into #{parsed} | #{error}"
 
 }

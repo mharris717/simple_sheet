@@ -23,10 +23,16 @@
   <div class='settings'>
     <ul>
       <li><a href='#deleteTable' {{action "delete"}}>Delete Table</a></li>
+      <li><a href='#loadCSV' {{action "showCSV"}}>Load CSV</a></li>
     </ul>
+    <div class='load-csv'>
+      {{view Em.TextArea valueBinding="csvContent"}}
+      <a href="#" {{action "loadCSV"}}>Load</a>
+    </div>
   </div>
 
   <div class='settings-icon'>
     <img {{action "showSettings" on="click"}} src="images/black-gear-icon.gif" width=30px height=24px>
+
   </div>
 </div>

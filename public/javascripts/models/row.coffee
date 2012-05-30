@@ -1,23 +1,28 @@
 app.CompositeRow = Ember.Object.extend
   init: ->
+    #logger.log "comp row"
     #@setSums()
+
+  table: (-> @$rows[0].$table).property('rows.@each')
 
   setSums: ->
     for field in @$rows[0].$table.$fields
-      val = 0
+      sum = 0
       for row in @$rows
-        val += row.getCellValue(field)
-      @set field, val
+        sum += row.getCellValue(field)
+      @set field, sum
 
   cellsForField: (f) ->
     _.map @$rows, (row) -> row.cellForField(f)
 
   getCellValue: (f) ->
     #@get(f)
-    val = 0
+    sum = 0
     for row in @$rows
-      val += row.getCellValue(f)
-    val
+      v = row.getCellValue(f)
+      if isPresent(v) && v != NaN
+        sum += v
+    sum
 
 app.Row = Ember.Object.extend
   init: ->
@@ -45,9 +50,9 @@ app.Row = Ember.Object.extend
   getCellValue: (f) ->
     cell = @cellForField(f)
     throw "no cell #{f} in table #{@$table.$name} " + (if @$fields then @$fields.join(",") else "") unless cell
-    logger.log "got #{cell.$value} for #{f}"
+    logger.debug "got #{cell.$value} for #{f}"
     res = cell.$value
-    res = parseFloat(res) if res.match && res.match(/^[0-9]+$/)
+    res = parseFloat(res) if res && res.match && res.match(/^[0-9]+$/)
     res
 
   multiEval: (str) ->
@@ -62,7 +67,10 @@ app.Row = Ember.Object.extend
     try
       res = Eval.evalFormula(this,rawStr,@$table.formulaParser())
     catch error
-      res = 'error ' + error
+      if testMode
+        throw error
+      else
+        res = 'error ' + error
     res
 
   toJson: ->

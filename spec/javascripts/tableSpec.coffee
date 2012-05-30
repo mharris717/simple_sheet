@@ -7,6 +7,7 @@ describe 'Stuff', ->
     
     describe "from widgets table", ->
       beforeEach ->
+        getWorkspacesFresh()
         workspace = getWorkspaces()[1]
         table = workspace.$tables.$content[0]
         row = table.$rows.$content[0]
@@ -60,16 +61,34 @@ describe 'Stuff', ->
       res = row.getCellValue('pa')
       expect(res).toEqual(1200)
 
-    describe 'new stats now', ->
-      beforeEach ->
-        row.getCellValue('pa')
-        stats.addRow(name: 'Ted Williams', year: 1957, pa: 600, hr: 10)
+    describe "bunch", ->
+      for i in [0...1]
+        describe 'new stats row - fully formed', ->
+          beforeEach ->
+            c = row.cellForField('pa')
+            c.set 'rawValue'," "
 
-        players.setupAll()
+            row.getCellValue('pa')
+            stats.addRow(name: 'Ted Williams', year: 1957, pa: 600, hr: 10)
 
-      it 'should sum to new value', ->
-        res = row.getCellValue('pa')
-        expect(res).toEqual(1800)
+          it 'should sum to new value', ->
+            res = row.getCellValue('pa')
+            expect(res).toEqual(1800)
+
+        describe 'new stats row - not fully formed', ->
+          beforeEach ->
+            c = row.cellForField('pa')
+            c.set 'rawValue'," "
+
+            row.getCellValue('pa')
+            Ember.run ->
+              newRow = stats.addRow(name: 'Ted Williamsx', year: 1957, pa: 600, hr: 10)
+              newRow.set 'name', 'Ted Williams'
+
+          it 'should sum to new value', ->
+            res = row.getCellValue('pa')
+            expect(res).toEqual(1800)
+
 
 
   describe 'baseball', ->
