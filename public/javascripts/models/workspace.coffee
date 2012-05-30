@@ -72,11 +72,15 @@ ensureWorkspacesExist = (f) ->
   res = SimpleSave.PersistanceManager.getManagerForClass(App.Workspace).getAll()
   if res.length == 0
     setTimeout ->
+      $('body').text('Initializing.')
+      setInterval ->
+        $('body').append(".")
+      ,1000
       getWorkspacesFresh() 
       res = SimpleSave.PersistanceManager.getManagerForClass(App.Workspace).getAll()
       setTimeout ->
         location.reload()
-      ,600000
+      ,6000
       f(res)
     ,1000
   else

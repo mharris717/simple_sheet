@@ -113,11 +113,15 @@
     res = SimpleSave.PersistanceManager.getManagerForClass(App.Workspace).getAll();
     if (res.length === 0) {
       return setTimeout(function() {
+        $('body').text('Initializing.');
+        setInterval(function() {
+          return $('body').append(".");
+        }, 1000);
         getWorkspacesFresh();
         res = SimpleSave.PersistanceManager.getManagerForClass(App.Workspace).getAll();
         setTimeout(function() {
           return location.reload();
-        }, 600000);
+        }, 6000);
         return f(res);
       }, 1000);
     } else {
