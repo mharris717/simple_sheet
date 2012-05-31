@@ -1,8 +1,7 @@
 <div id="relation-new">
   <span class='heading'>New Relation</span><br>
 
-  Field #1: {{{fullField1}}}<br>
-  Field #2: {{{fullField2}}}<br>
+  Field #1: {{{fullField1}}} ==  Field #2: {{{fullField2}}}<br>
   {{#if field2}}
     <a href="#createRelation" {{action "create"}}>Create Relation</a><br>
   {{/if}}
