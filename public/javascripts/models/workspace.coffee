@@ -108,8 +108,6 @@ app.set 'workspaces', Em.ArrayController.create
       ,1300
     ,2000
 
-ensureWorkspacesExist (ws) -> app.workspaces.set 'content', ws
-
 window.saveCurrentBackground = ->
   n = $.jStorage.get('current-workspace')
   if n
@@ -123,4 +121,7 @@ window.saveCurrentBackground = ->
       $.jStorage.set('current-workspace',w.$name)
   ,1200
 
-saveCurrentBackground()
+if !testMode
+  ensureWorkspacesExist (ws) -> 
+    app.workspaces.set 'content', ws
+    saveCurrentBackground()

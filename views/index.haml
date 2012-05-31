@@ -1,5 +1,7 @@
 %html
   %head
+    %script
+      window.testMode = false
     %title Simple Sheet
     - views.each do |v,str|
       %script{:type => "text/x-handlebars", "data-template-name" => "views_#{v}"}
