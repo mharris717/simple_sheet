@@ -25,9 +25,9 @@ helpers do
     Dir["public/stylesheets/**/*.css"].map { |x| x.gsub("public/","") }
   end
   def views
-    Dir["public/javascripts/views/*"].inject({}) do |h,f|
+    Dir["public/javascripts/views/**/*.js.hjs"].inject({}) do |h,f|
       str = File.read(f)
-      name = File.basename(f).split(".").first
+      name = f.gsub("public/javascripts/views/","").gsub(".js.hjs","").gsub("/","_")
       h.merge(name => str)
     end
   end
@@ -56,3 +56,5 @@ post "/convert" do
   res = Net::HTTP.get_response(uri)
   res.body
 end
+
+## --dontload

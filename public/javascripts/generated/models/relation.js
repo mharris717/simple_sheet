@@ -54,6 +54,9 @@
       }
       return _results;
     },
+    "delete": function() {
+      return this.get('baseTable').get('relations').removeObject(this);
+    },
     getRows: function(baseRow) {
       var option, otherRow, res, rows, _i, _len, _ref;
       res = [];
@@ -140,4 +143,56 @@
       return res;
     }
   });
+  app.Relation.ManageView = Em.View.extend({
+    templateName: "views_relation_manage"
+  });
+  app.Relation.NewView = Em.View.extend({
+    templateName: "views_relation_new",
+    pickField: function(e) {
+      var col;
+      col = e.context;
+      if (!this.get('field1')) {
+        return this.set('field1', col);
+      } else {
+        return this.set('field2', col);
+      }
+    },
+    create: function(e) {
+      var forForm, formula, table;
+      table = this.get('field1').get('table');
+      forForm = function(f) {
+        return "$" + (f.get('table').get('name')) + "." + (f.get('field'));
+      };
+      formula = "" + (forForm(this.get('field1'))) + " == " + (forForm(this.get('field2')));
+      console.debug(formula);
+      table.addRelation(this.get('field2').get('table').get('name'), formula);
+      this.set('field1', void 0);
+      return this.set('field2', void 0);
+    }
+  });
+  app.Relation.ListView = Em.View.extend({
+    templateName: "views_relation_list"
+  });
+  app.Relation.ShowView = Em.View.extend({
+    templateName: "views_relation_show",
+    "delete": function(e) {
+      return this.get('relation')["delete"]();
+    }
+  });
+  window.findNestedProp = function(obj, prop) {
+    var k, v, _results;
+    if (_.isFunction(obj) || _.isNumber(obj) || _.isString(obj) || isBlank(obj)) {
+      return;
+    }
+    console.debug(obj);
+    _results = [];
+    for (k in obj) {
+      v = obj[k];
+      if (k === prop) {
+        console.debug("found " + prop);
+      }
+      _results.push(isPresent(v) && v !== obj ? findNestedProp(v, prop) : void 0);
+    }
+    return _results;
+  };
 }).call(this);

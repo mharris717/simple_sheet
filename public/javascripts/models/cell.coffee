@@ -47,7 +47,7 @@ app.Cell = Ember.Object.extend
     else
       res
     #logger.log "value call for #{@$field} res #{res}"
-    res).property('rawValue').cacheable()
+    res).property('rawValue','row.table.workspace.relations.@each.formula').cacheable()
 
   areObserversSetup: false
   ensureSetupObservers: ->

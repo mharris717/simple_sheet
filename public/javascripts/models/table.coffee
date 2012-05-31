@@ -20,6 +20,8 @@ app.Table = Em.Object.extend
     @set 'relations', App.Relations.create(table: this)
     #@setupAll()
 
+  relationCount: (-> @$relations.$content.length).property("relations.@each")
+
   save: -> 4
 
   saveName: -> @$name

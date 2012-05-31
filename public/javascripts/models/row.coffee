@@ -1,29 +1,3 @@
-app.CompositeRow = Ember.Object.extend
-  init: ->
-    #logger.log "comp row"
-    #@setSums()
-
-  table: (-> @$rows[0].$table).property('rows.@each')
-
-  setSums: ->
-    for field in @$rows[0].$table.$fields
-      sum = 0
-      for row in @$rows
-        sum += row.getCellValue(field)
-      @set field, sum
-
-  cellsForField: (f) ->
-    _.map @$rows, (row) -> row.cellForField(f)
-
-  getCellValue: (f) ->
-    #@get(f)
-    sum = 0
-    for row in @$rows
-      v = row.getCellValue(f)
-      if isPresent(v) && v != NaN
-        sum += v
-    sum
-
 app.Row = Ember.Object.extend
   init: ->
     logger.debug 'made a row'
@@ -88,13 +62,43 @@ app.Row = Ember.Object.extend
         if !rows
           throw "getRows returned garbage"
         else if rows.length > 1
-          app.CompositeRow.create(rows: rows)
+          app.Row.CompositeRow.create(rows: rows)
         else if rows.length == 1
           rows[0]
         else
-          undefined
+          app.Row.NullRow.create()
       else
         undefined
         #c = @$$table.$$workspace.getTable(name).$$rows.$$content
         #c[0]
 
+
+app.Row.CompositeRow = Ember.Object.extend
+  init: ->
+    #logger.log "comp row"
+    #@setSums()
+
+  table: (-> @$rows[0].$table).property('rows.@each')
+
+  setSums: ->
+    for field in @$rows[0].$table.$fields
+      sum = 0
+      for row in @$rows
+        sum += row.getCellValue(field)
+      @set field, sum
+
+  cellsForField: (f) ->
+    _.map @$rows, (row) -> row.cellForField(f)
+
+  getCellValue: (f) ->
+    #@get(f)
+    sum = 0
+    for row in @$rows
+      v = row.getCellValue(f)
+      if isPresent(v) && v != NaN
+        sum += v
+    sum
+
+app.Row.NullRow = Ember.Object.extend
+  getCellValue: (f) -> undefined
+  cellForField: (f) -> undefined

@@ -1,0 +1,2 @@
+{{relation.formula}}
+<a href="#deleteRelation" {{action "delete"}}><img src="images/x.png" height=12px width=12px></a>

@@ -5,6 +5,9 @@
     init: function() {
       return this.set('incValue', 0);
     },
+    fullField: (function() {
+      return "" + (this.get('table').get('name')) + "." + (this.get('field'));
+    }).property('table.name', 'field'),
     recalc: function() {
       return this.incrementProperty('incValue');
     },

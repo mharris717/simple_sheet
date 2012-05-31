@@ -50,3 +50,7 @@ table.main td {
 table.main th {
   min-width: 50px;
 }
+
+span.heading {
+  font-size: 20px;
+}

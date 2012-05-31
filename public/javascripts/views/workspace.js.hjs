@@ -1,4 +1,5 @@
 <div class='workspace'>
+  {{view App.WorkspaceNameView workspace=workspace}}
   <div class='tables'>
     {{#each workspace.tables}}
       {{view App.TableView table=this}}

@@ -45,7 +45,7 @@
       row = this.get('row');
       res = res && res.substr && res.substr(0, 1) === '=' ? (rest = res.substr(1, 999), logger.debug("eval " + (this.get('field')) + " | " + rest), res = row.evalInContext(rest), _.isNumber(res) ? res = roundNumber(res, 3) : void 0, res) : res;
       return res;
-    }).property('rawValue').cacheable(),
+    }).property('rawValue', 'row.table.workspace.relations.@each.formula').cacheable(),
     areObserversSetup: false,
     ensureSetupObservers: function() {
       if (!this.areObserversSetup) {

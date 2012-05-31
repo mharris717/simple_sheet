@@ -27,6 +27,9 @@
         table: this
       }));
     },
+    relationCount: (function() {
+      return this.get('relations').get('content').length;
+    }).property("relations.@each"),
     save: function() {
       return 4;
     },

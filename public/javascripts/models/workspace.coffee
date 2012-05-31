@@ -46,6 +46,10 @@ app.Workspace = Em.Object.extend
     for t in @$tables.$content
       SimpleSave.save(t)
 
+  relations: (->
+    res = @$tables.map (t) -> t.$relations.$content
+    _.flatten(res)).property('tables.@each.relationCount')
+
 
 
 window.getWorkspacesFresh = ->

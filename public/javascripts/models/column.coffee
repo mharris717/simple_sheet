@@ -2,6 +2,8 @@ app.Column = Ember.Object.extend
   init: ->
     @set 'incValue',0
 
+  fullField: (-> "#{@$table.$name}.#{@$field}").property('table.name','field')
+
   recalc: ->
     @incrementProperty('incValue')
 

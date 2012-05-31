@@ -1,0 +1,2 @@
+{{view App.Relation.ListView workspace=workspace}}
+{{view App.Relation.NewView workspace=workspace}}

@@ -13,6 +13,9 @@
     <ul>
       <li><a href='#newTable' {{action "newTable"}}>New Table</a></li>
       <li><a href='#makeFresh' {{action "makeFresh"}}>Make Fresh</a></li>
+      <li><a href='#manageRelations' {{action "manageRelations"}}>Manage Relations</a></li>
+      <li><a href='#newWorkspace' {{action "newWorkspace"}}>New Workspace</a></li>
+      <li><a href='#renameWorkspace' {{action "renameWorkspace"}}>Rename Workspace</a></li>
     </ul>
   </div>
 

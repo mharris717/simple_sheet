@@ -1,0 +1,3 @@
+{{#if parentView.editingName}}
+  {{view Ember.TextField valueBinding="workspace.name"}}
+{{/if}}

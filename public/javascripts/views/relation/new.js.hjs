@@ -1,0 +1,25 @@
+<div id="relation">
+  <span class='heading'>New Relation</span><br>
+
+  Field #1: {{field1.fullField}}<br>
+  Field #2: {{field2.fullField}}<br>
+  {{#if field2}}
+    <a href="#createRelation" {{action "create"}}>Create Relation</a><br>
+  {{/if}}
+
+  <div class="fields">
+    <table>
+      {{#each workspace.tables}}
+        <tr>
+          <td>{{name}}</td>
+          {{#each columns}}
+            <td>
+              <a href="#" {{action "pickField"}}>{{field}}</a>
+            </td>
+          {{/each}}
+        </tr>
+      {{/each}}
+    </table>
+  </div>
+
+</div>

@@ -83,7 +83,14 @@
         _results.push(SimpleSave.save(t));
       }
       return _results;
-    }
+    },
+    relations: (function() {
+      var res;
+      res = this.get('tables').map(function(t) {
+        return t.get('relations').get('content');
+      });
+      return _.flatten(res);
+    }).property('tables.@each.relationCount')
   });
   window.getWorkspacesFresh = function() {
     var w, w2, w3;

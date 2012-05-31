@@ -3,7 +3,10 @@
   app = window.App;
   app.MainView = Ember.View.extend({
     templateName: "views_main",
-    tableBinding: "App.table"
+    tableBinding: "App.table",
+    workspaceView: function() {
+      return this._childViews[1];
+    }
   });
   app.RowView = Ember.View.extend({
     templateName: "views_row"
@@ -75,17 +78,46 @@
       return this.get('workspace').newTable();
     }
   });
+  app.WorkspaceNameView = Em.View.extend({
+    templateName: "views_workspace_name",
+    focusOut: function(e) {
+      return this.get('parentView').set('editingName', false);
+    }
+  });
   app.HeaderView = Em.View.extend({
     workspaceBinding: "App.workspaces.current",
     templateName: "views_header",
     newTable: function(e) {
-      return this.get('workspace').newTable();
+      this.get('workspace').newTable();
+      return this.$('.settings').toggle();
     },
     showSettings: function(e) {
-      return this.$('.settings').show();
+      return this.$('.settings').toggle();
     },
     makeFresh: function(e) {
       return app.workspaces.makeFresh();
+    },
+    manageRelations: function(e) {
+      var v;
+      v = app.Relation.ManageView.create({
+        workspace: this.get('workspace')
+      });
+      v.append();
+      return this.$('.settings').toggle();
+    },
+    newWorkspace: function(e) {
+      var w;
+      w = app.Workspace.create({
+        name: 'Untitled'
+      });
+      w.save();
+      app.workspaces.pushObject(w);
+      app.workspaces.set('current', w);
+      return this.$('.settings').toggle();
+    },
+    renameWorkspace: function(e) {
+      this.get('parentView').workspaceView().set('editingName', true);
+      return this.$('.settings').toggle();
     }
   });
   $(function() {

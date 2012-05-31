@@ -1,0 +1,4 @@
+<span class='heading'>Existing Relations</span>
+{{#each workspace.relations}}
+  {{view App.Relation.ShowView relation=this}}
+{{/each}}

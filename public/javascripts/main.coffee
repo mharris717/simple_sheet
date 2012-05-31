@@ -2,6 +2,9 @@ app.MainView = Ember.View.extend
   templateName: "views_main"
   tableBinding: "App.table"
 
+  workspaceView: ->
+    @_childViews[1]
+
 app.RowView = Ember.View.extend
   templateName: "views_row"
 
@@ -68,18 +71,44 @@ app.WorkspaceView = Em.View.extend
   newTable: (e) ->
     @$workspace.newTable()
 
+app.WorkspaceNameView = Em.View.extend
+  templateName: "views_workspace_name"
+
+  focusOut: (e) ->
+    @$parentView.set 'editingName', false
+
 app.HeaderView = Em.View.extend
   workspaceBinding: "App.workspaces.current"
   templateName: "views_header"
 
   newTable: (e) ->
     @$workspace.newTable()
+    this.$('.settings').toggle()
 
   showSettings: (e) ->
-    this.$('.settings').show()
+    this.$('.settings').toggle()
 
   makeFresh: (e) ->
     app.workspaces.makeFresh()
+
+  manageRelations: (e) ->
+    v = app.Relation.ManageView.create(workspace: @$workspace)
+    #ge = $('#general-edit')
+    #ge.html('')
+    v.append()
+    this.$('.settings').toggle()
+
+  newWorkspace: (e) ->
+    w = app.Workspace.create(name: 'Untitled')
+    w.save()
+    app.workspaces.pushObject(w)
+    app.workspaces.set 'current',w
+    this.$('.settings').toggle()
+
+  renameWorkspace: (e) ->
+    @$parentView.workspaceView().set 'editingName', true
+    this.$('.settings').toggle()
+
 
 $ ->  
   #t = makeFreshTable()

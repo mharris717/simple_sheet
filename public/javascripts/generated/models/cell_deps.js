@@ -47,6 +47,8 @@
             dep = _ref[_i];
             if (dep.table !== this.get('cell').get('row').get('table').get('name')) {
               res.push([table, "rows.@each." + dep.field]);
+            } else {
+              res.push(this.get('cell').get('row').cellForField(dep.field));
             }
           }
         }
@@ -77,12 +79,14 @@
       _ref = this.cells();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         cell = _ref[_i];
-        if (cell.length && cell.length === 2) {
-          cell[0].removeObserver(cell[1], this.get('cell'), this.get('cell').recalcSpecial);
-          cell[0].addObserver(cell[1], this.get('cell'), this.get('cell').recalcSpecial);
-        } else {
-          cell.removeObserver('value', this.get('cell'), this.get('cell').recalc);
-          cell.addObserver('value', this.get('cell'), this.get('cell').recalc);
+        if (cell) {
+          if (cell.length && cell.length === 2) {
+            cell[0].removeObserver(cell[1], this.get('cell'), this.get('cell').recalcSpecial);
+            cell[0].addObserver(cell[1], this.get('cell'), this.get('cell').recalcSpecial);
+          } else {
+            cell.removeObserver('value', this.get('cell'), this.get('cell').recalc);
+            cell.addObserver('value', this.get('cell'), this.get('cell').recalc);
+          }
         }
       }
       this.get('cell').get('row').get('table').get('formulas').removeObserver(this.get('cell').get('field'), this.get('cell'), this.get('cell').recalc);

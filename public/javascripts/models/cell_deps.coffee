@@ -32,6 +32,8 @@ app.CellDeps = Em.Object.extend
         for dep in getForeignFieldsFromFormula(relation.$formula)
           if dep.table != @$cell.$row.$table.$name
             res.push([table,"rows.@each.#{dep.field}"])
+          else
+            res.push(@$cell.$row.cellForField(dep.field))
       res
 
     deps = @localDeps()
@@ -57,13 +59,14 @@ app.CellDeps = Em.Object.extend
   setupObservers: ->
     #return if @$cell.$row.$table.$hydrating
     for cell in @cells()
-      #logger.debug "adding observer from #{@$field} to #{cell.$field}"
-      if cell.length && cell.length == 2
-        cell[0].removeObserver cell[1],@$cell,@$cell.recalcSpecial
-        cell[0].addObserver cell[1],@$cell,@$cell.recalcSpecial
-      else
-        cell.removeObserver 'value',@$cell,@$cell.recalc
-        cell.addObserver 'value',@$cell,@$cell.recalc
+      if cell
+        #logger.debug "adding observer from #{@$field} to #{cell.$field}"
+        if cell.length && cell.length == 2
+          cell[0].removeObserver cell[1],@$cell,@$cell.recalcSpecial
+          cell[0].addObserver cell[1],@$cell,@$cell.recalcSpecial
+        else
+          cell.removeObserver 'value',@$cell,@$cell.recalc
+          cell.addObserver 'value',@$cell,@$cell.recalc
 
     @$cell.$row.$table.$formulas.removeObserver @$cell.$field, @$cell, @$cell.recalc
     @$cell.$row.$table.$formulas.addObserver @$cell.$field, @$cell, @$cell.recalc
