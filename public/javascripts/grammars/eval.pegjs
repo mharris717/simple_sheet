@@ -20,7 +20,7 @@ cleanVar
   = pv:possibleVar !varChar { return pv }
 
 minMax
-  = "min" / "max" / "avg"
+  = "min" / "max" / "avg" / "sum"
 
 possibleVar
   = "price" / "cost" '}

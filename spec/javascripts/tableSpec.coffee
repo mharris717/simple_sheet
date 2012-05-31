@@ -54,7 +54,7 @@ describe 'Stuff', ->
       players.setupAll()
 
     it 'should sum', ->
-      res = row.evalInContext("$stats.hr")
+      res = row.evalInContext("$stats.hr.sum")
       expect(res).toEqual(40)
 
     it 'should sum 2', ->

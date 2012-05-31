@@ -61,7 +61,7 @@
       });
       it('should sum', function() {
         var res;
-        res = row.evalInContext("$stats.hr");
+        res = row.evalInContext("$stats.hr.sum");
         return expect(res).toEqual(40);
       });
       it('should sum 2', function() {
