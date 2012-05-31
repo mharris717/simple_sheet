@@ -154,9 +154,6 @@
       }, 2000);
     }
   }));
-  ensureWorkspacesExist(function(ws) {
-    return app.workspaces.set('content', ws);
-  });
   window.saveCurrentBackground = function() {
     var n, w;
     n = $.jStorage.get('current-workspace');
@@ -172,5 +169,10 @@
       }
     }, 1200);
   };
-  saveCurrentBackground();
+  if (!testMode) {
+    ensureWorkspacesExist(function(ws) {
+      app.workspaces.set('content', ws);
+      return saveCurrentBackground();
+    });
+  }
 }).call(this);
