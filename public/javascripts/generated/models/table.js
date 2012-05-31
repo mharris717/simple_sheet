@@ -198,30 +198,6 @@
       this.get('table').loadCSV(this.get('csvContent'));
       this.$('.load-csv').hide();
       return this.$('.settings').hide();
-    },
-    mouseDown: function(e) {
-      console.debug("mouseDown t");
-      return console.debug(e);
-    },
-    mousedown: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    },
-    rightClick: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    },
-    rightclick: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    },
-    altclick: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    },
-    altClick: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
     }
   });
   app.Table.load = function() {

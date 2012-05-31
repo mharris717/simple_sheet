@@ -5,36 +5,6 @@ app.MainView = Ember.View.extend
 app.RowView = Ember.View.extend
   templateName: "views_row"
 
-  mouseDown: (e) ->
-    console.debug "mouseDown"
-    console.debug e
-
-  mousedown: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-  rightClick: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-  rightclick: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-  altclick: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-  altClick: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-app.NullView = Ember.View.extend
-  templateName: "views_null"
-  
-app.CatView = Ember.View.extend
-  templateName: "views_cat"
-  
 app.CellView = Ember.View.extend
   templateName: "views_cell"
   valueBinding: "cell.value"

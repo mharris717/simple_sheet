@@ -121,29 +121,6 @@ app.TableView = Em.View.extend
     this.$('.load-csv').hide()
     this.$('.settings').hide()
 
-  mouseDown: (e) ->
-    console.debug "mouseDown t"
-    console.debug e
-
-  mousedown: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-  rightClick: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-  rightclick: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-  altclick: (e) ->
-    console.debug "mouse down"
-    console.debug e
-
-  altClick: (e) ->
-    console.debug "mouse down"
-    console.debug e
 
 app.Table.load = ->
   raw = $.jStorage.get('table')

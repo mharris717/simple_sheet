@@ -6,37 +6,7 @@
     tableBinding: "App.table"
   });
   app.RowView = Ember.View.extend({
-    templateName: "views_row",
-    mouseDown: function(e) {
-      console.debug("mouseDown");
-      return console.debug(e);
-    },
-    mousedown: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    },
-    rightClick: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    },
-    rightclick: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    },
-    altclick: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    },
-    altClick: function(e) {
-      console.debug("mouse down");
-      return console.debug(e);
-    }
-  });
-  app.NullView = Ember.View.extend({
-    templateName: "views_null"
-  });
-  app.CatView = Ember.View.extend({
-    templateName: "views_cat"
+    templateName: "views_row"
   });
   app.CellView = Ember.View.extend({
     templateName: "views_cell",
