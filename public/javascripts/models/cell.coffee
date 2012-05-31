@@ -92,23 +92,25 @@ Array.prototype.min = ->
       res = obj
   res
 
+Array.prototype.avg = ->
+  return 0 if @length == 0
+  res = 0
+  for obj in this
+    if obj
+      res += parseFloat(obj)
+  res / @length
+
 Array.prototype.sum = ->
   return 0 if @length == 0
   res = 0
   for obj in this
-    console.debug obj
     if obj
       res += parseFloat(obj)
   res
 
 app.Cell.CompositeCell = Em.Object.extend
   toValue: (type='sum') ->
-    if type == 'max'
-      @$values.max()
-    else if type == 'min'
-      @$values.min()
-    else if type == 'sum'
-      @$values.sum()
+    @$values[type]()
 
   values: (->
     @$cells.map (obj) -> obj.$value).property('cells.@each.value')

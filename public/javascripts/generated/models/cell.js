@@ -118,6 +118,20 @@
     }
     return res;
   };
+  Array.prototype.avg = function() {
+    var obj, _i, _len;
+    if (this.length === 0) {
+      return 0;
+    }
+    res = 0;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      obj = this[_i];
+      if (obj) {
+        res += parseFloat(obj);
+      }
+    }
+    return res / this.length;
+  };
   Array.prototype.sum = function() {
     var obj, _i, _len;
     if (this.length === 0) {
@@ -126,7 +140,6 @@
     res = 0;
     for (_i = 0, _len = this.length; _i < _len; _i++) {
       obj = this[_i];
-      console.debug(obj);
       if (obj) {
         res += parseFloat(obj);
       }
@@ -138,13 +151,7 @@
       if (type == null) {
         type = 'sum';
       }
-      if (type === 'max') {
-        return this.get('values').max();
-      } else if (type === 'min') {
-        return this.get('values').min();
-      } else if (type === 'sum') {
-        return this.get('values').sum();
-      }
+      return this.get('values')[type]();
     },
     values: (function() {
       return this.get('cells').map(function(obj) {
