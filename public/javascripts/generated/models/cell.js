@@ -44,6 +44,9 @@
       res = this.get('rawValueOrFormula');
       row = this.get('row');
       res = res && res.substr && res.substr(0, 1) === '=' ? (rest = res.substr(1, 999), logger.debug("eval " + (this.get('field')) + " | " + rest), res = row.evalInContext(rest), _.isNumber(res) ? res = roundNumber(res, 3) : void 0, res) : res;
+      if (res && res.toValue) {
+        res = res.toValue();
+      }
       return res;
     }).property('rawValue', 'row.table.workspace.relations.@each.formula').cacheable(),
     areObserversSetup: false,
@@ -70,5 +73,83 @@
         return this.triggerSave();
       }
     }).observes('rawValue')
+  });
+  Array.prototype.max = function() {
+    var obj, _i, _len;
+    res = this[0];
+    if (this.length === 0) {
+      return res;
+    }
+    if (this.length === 1) {
+      return this[0];
+    }
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      obj = this[_i];
+      if (obj) {
+        obj = parseFloat(obj);
+      }
+      if (!res) {
+        res = obj;
+      } else if (obj && obj > res) {
+        res = obj;
+      }
+    }
+    return res;
+  };
+  Array.prototype.min = function() {
+    var obj, _i, _len;
+    res = this[0];
+    if (this.length === 0) {
+      return res;
+    }
+    if (this.length === 1) {
+      return this[0];
+    }
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      obj = this[_i];
+      if (obj) {
+        obj = parseFloat(obj);
+      }
+      if (!res) {
+        res = obj;
+      } else if (obj && obj < res) {
+        res = obj;
+      }
+    }
+    return res;
+  };
+  Array.prototype.sum = function() {
+    var obj, _i, _len;
+    if (this.length === 0) {
+      return 0;
+    }
+    res = 0;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      obj = this[_i];
+      console.debug(obj);
+      if (obj) {
+        res += parseFloat(obj);
+      }
+    }
+    return res;
+  };
+  app.Cell.CompositeCell = Em.Object.extend({
+    toValue: function(type) {
+      if (type == null) {
+        type = 'sum';
+      }
+      if (type === 'max') {
+        return this.get('values').max();
+      } else if (type === 'min') {
+        return this.get('values').min();
+      } else if (type === 'sum') {
+        return this.get('values').sum();
+      }
+    },
+    values: (function() {
+      return this.get('cells').map(function(obj) {
+        return obj.get('value');
+      });
+    }).property('cells.@each.value')
   });
 }).call(this);

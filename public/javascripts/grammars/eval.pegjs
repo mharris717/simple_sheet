@@ -1,5 +1,5 @@
 window.evalGrammar = function() { return 'start
-  = stuff:(var / table / anything)+ { return (stuff.join ? stuff.join("") : "FOOBAR") }
+  = stuff:(varWithAgg / var / table / anything)+ { return (stuff.join ? stuff.join("") : "FOOBAR") }
 
 anything
   = .
@@ -13,8 +13,14 @@ table
 varChar
   = [a-z_]
 
+varWithAgg
+  = v:cleanVar "." mm:minMax { return "this.getCellValue(\'" + v + "\',\'"+mm+"\')" }
+
 cleanVar
   = pv:possibleVar !varChar { return pv }
+
+minMax
+  = "min" / "max"
 
 possibleVar
   = "price" / "cost" '}

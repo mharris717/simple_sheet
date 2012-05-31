@@ -74,30 +74,19 @@ app.Row = Ember.Object.extend
 
 
 app.Row.CompositeRow = Ember.Object.extend
-  init: ->
-    #logger.log "comp row"
-    #@setSums()
-
   table: (-> @$rows[0].$table).property('rows.@each')
-
-  setSums: ->
-    for field in @$rows[0].$table.$fields
-      sum = 0
-      for row in @$rows
-        sum += row.getCellValue(field)
-      @set field, sum
 
   cellsForField: (f) ->
     _.map @$rows, (row) -> row.cellForField(f)
 
-  getCellValue: (f) ->
-    #@get(f)
-    sum = 0
-    for row in @$rows
-      v = row.getCellValue(f)
-      if isPresent(v) && v != NaN
-        sum += v
-    sum
+  cellForField: (f) ->
+    cells = @$rows.map (row) -> row.cellForField(f)
+    app.Cell.CompositeCell.create(cells: cells)
+
+  getCellValue: (f,type) ->
+    res = @cellForField(f)
+    res = res.toValue(type) if type && res && res.toValue
+    res
 
 app.Row.NullRow = Ember.Object.extend
   getCellValue: (f) -> undefined

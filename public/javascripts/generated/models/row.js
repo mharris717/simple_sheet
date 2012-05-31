@@ -112,43 +112,30 @@
     }
   });
   app.Row.CompositeRow = Ember.Object.extend({
-    init: function() {},
     table: (function() {
       return this.get('rows')[0].get('table');
     }).property('rows.@each'),
-    setSums: function() {
-      var field, row, sum, _i, _j, _len, _len2, _ref, _ref2, _results;
-      _ref = this.get('rows')[0].get('table').get('fields');
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        field = _ref[_i];
-        sum = 0;
-        _ref2 = this.get('rows');
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          row = _ref2[_j];
-          sum += row.getCellValue(field);
-        }
-        _results.push(this.set(field, sum));
-      }
-      return _results;
-    },
     cellsForField: function(f) {
       return _.map(this.get('rows'), function(row) {
         return row.cellForField(f);
       });
     },
-    getCellValue: function(f) {
-      var row, sum, v, _i, _len, _ref;
-      sum = 0;
-      _ref = this.get('rows');
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        row = _ref[_i];
-        v = row.getCellValue(f);
-        if (isPresent(v) && v !== NaN) {
-          sum += v;
-        }
+    cellForField: function(f) {
+      var cells;
+      cells = this.get('rows').map(function(row) {
+        return row.cellForField(f);
+      });
+      return app.Cell.CompositeCell.create({
+        cells: cells
+      });
+    },
+    getCellValue: function(f, type) {
+      var res;
+      res = this.cellForField(f);
+      if (type && res && res.toValue) {
+        res = res.toValue(type);
       }
-      return sum;
+      return res;
     }
   });
   app.Row.NullRow = Ember.Object.extend({

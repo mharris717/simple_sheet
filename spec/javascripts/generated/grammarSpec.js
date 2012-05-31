@@ -14,6 +14,26 @@
       res = parser.parse("2+2*7");
       return expect(res).toEqual(16);
     });
+    describe('min/max', function() {
+      var parser;
+      parser = null;
+      beforeEach(function() {
+        return parser = Eval.getFormulaParser({
+          vars: ['tax', 'price', 'tax_rate', 'target']
+        });
+      });
+      it('sum', function() {
+        var res;
+        res = [1, 2, 3].sum();
+        return expect(res).toEqual(6);
+      });
+      return it('parses min max', function() {
+        var parsed, str;
+        str = "$widgets.price.max";
+        parsed = parser.myParse(str);
+        return expect(parsed).toEqual("this.rowFromTable('widgets').getCellValue('price','max')");
+      });
+    });
     describe('eval', function() {
       var base;
       base = null;

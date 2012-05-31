@@ -9,6 +9,20 @@ describe "grammar", ->
     res = parser.parse("2+2*7")
     expect(res).toEqual(16)
 
+  describe 'min/max', ->
+    parser = null
+    beforeEach ->
+      parser = Eval.getFormulaParser(vars: ['tax','price','tax_rate','target'])
+
+    it 'sum', ->
+      res = [1,2,3].sum()
+      expect(res).toEqual(6)
+
+    it 'parses min max', ->
+      str = "$widgets.price.max"
+      parsed = parser.myParse(str)
+      expect(parsed).toEqual("this.rowFromTable('widgets').getCellValue('price','max')")
+
   describe 'eval', ->
     base = null
     beforeEach ->

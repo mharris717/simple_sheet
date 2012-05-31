@@ -47,6 +47,7 @@ app.Cell = Ember.Object.extend
     else
       res
     #logger.log "value call for #{@$field} res #{res}"
+    res = res.toValue() if res && res.toValue
     res).property('rawValue','row.table.workspace.relations.@each.formula').cacheable()
 
   areObserversSetup: false
@@ -67,3 +68,59 @@ app.Cell = Ember.Object.extend
    @triggerSave() unless testMode
   ).observes('rawValue')
 
+Array.prototype.max = ->
+  res = this[0]
+  return res if @length == 0
+  return this[0] if @length == 1
+  for obj in this
+    obj = parseFloat(obj) if obj
+    if !res
+      res = obj
+    else if obj && obj > res
+      res = obj
+  res
+
+Array.prototype.min = ->
+  res = this[0]
+  return res if @length == 0
+  return this[0] if @length == 1
+  for obj in this
+    obj = parseFloat(obj) if obj
+    if !res
+      res = obj
+    else if obj && obj < res
+      res = obj
+  res
+
+Array.prototype.sum = ->
+  return 0 if @length == 0
+  res = 0
+  for obj in this
+    console.debug obj
+    if obj
+      res += parseFloat(obj)
+  res
+
+app.Cell.CompositeCell = Em.Object.extend
+  toValue: (type='sum') ->
+    if type == 'max'
+      @$values.max()
+    else if type == 'min'
+      @$values.min()
+    else if type == 'sum'
+      @$values.sum()
+
+  values: (->
+    @$cells.map (obj) -> obj.$value).property('cells.@each.value')
+
+
+
+
+
+
+
+
+
+
+
+  
