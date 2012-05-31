@@ -87,6 +87,20 @@ app.Relation.ManageView = Em.View.extend
 app.Relation.NewView = Em.View.extend
   templateName: "views_relation_new"
 
+  fullField1: (->
+    if @$field1
+      @$field1.$fullField
+    else
+      "<span class='small-message'>(Click field to set)</span>").property('field1')
+
+  fullField2: (->
+    if @$field2
+      @$field2.$fullField
+    else if @$field1
+      "<span class='small-message'>(Click field to set)</span>"
+    else
+      undefined).property('field1','field2')
+
   pickField: (e) ->
     col = e.context
     if !@$field1
@@ -99,12 +113,17 @@ app.Relation.NewView = Em.View.extend
 
     forForm = (f) -> "$#{f.$table.$name}.#{f.$field}"
     formula = "#{forForm(@$field1)} == #{forForm(@$field2)}"
-    console.debug formula
 
     table.addRelation @$field2.$table.$name, formula
 
     @set 'field1',undefined
     @set 'field2',undefined
+
+app.Relation.NewColumnsView = Em.View.extend
+  templateName: "views_relation_new_columns"
+
+  pickField: (e) ->
+    @$parentView.pickField(e)
 
 app.Relation.ListView = Em.View.extend
   templateName: "views_relation_list"

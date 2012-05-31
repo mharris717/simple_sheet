@@ -1,25 +1,18 @@
-<div id="relation">
+<div id="relation-new">
   <span class='heading'>New Relation</span><br>
 
-  Field #1: {{field1.fullField}}<br>
-  Field #2: {{field2.fullField}}<br>
+  Field #1: {{{fullField1}}}<br>
+  Field #2: {{{fullField2}}}<br>
   {{#if field2}}
     <a href="#createRelation" {{action "create"}}>Create Relation</a><br>
   {{/if}}
 
   <div class="fields">
-    <table>
-      {{#each workspace.tables}}
-        <tr>
-          <td>{{name}}</td>
-          {{#each columns}}
-            <td>
-              <a href="#" {{action "pickField"}}>{{field}}</a>
-            </td>
-          {{/each}}
-        </tr>
-      {{/each}}
-    </table>
+    {{#each workspace.tables}}
+      <span class='heading'>{{name}}</span>
+      {{view App.Relation.NewColumnsView table=this}}
+      </br>
+    {{/each}}
   </div>
 
 </div>

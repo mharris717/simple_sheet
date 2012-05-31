@@ -1,0 +1,12 @@
+#relation-new .relation-field {
+  padding: 5px;
+}
+
+#relation-new .relation-field a:visited {
+  color: Blue;
+}
+
+.small-message {
+  color: Red;
+  font-size: 70%;
+}

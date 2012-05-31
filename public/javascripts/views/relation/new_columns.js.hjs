@@ -1,0 +1,5 @@
+{{#each table.columns}}
+  <span class='relation-field'>
+    <a href="#pickField" {{action "pickField"}}>{{field}}</a>
+  </span>
+{{/each}}

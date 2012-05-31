@@ -148,6 +148,22 @@
   });
   app.Relation.NewView = Em.View.extend({
     templateName: "views_relation_new",
+    fullField1: (function() {
+      if (this.get('field1')) {
+        return this.get('field1').get('fullField');
+      } else {
+        return "<span class='small-message'>(Click field to set)</span>";
+      }
+    }).property('field1'),
+    fullField2: (function() {
+      if (this.get('field2')) {
+        return this.get('field2').get('fullField');
+      } else if (this.get('field1')) {
+        return "<span class='small-message'>(Click field to set)</span>";
+      } else {
+        return;
+      }
+    }).property('field1', 'field2'),
     pickField: function(e) {
       var col;
       col = e.context;
@@ -164,10 +180,15 @@
         return "$" + (f.get('table').get('name')) + "." + (f.get('field'));
       };
       formula = "" + (forForm(this.get('field1'))) + " == " + (forForm(this.get('field2')));
-      console.debug(formula);
       table.addRelation(this.get('field2').get('table').get('name'), formula);
       this.set('field1', void 0);
       return this.set('field2', void 0);
+    }
+  });
+  app.Relation.NewColumnsView = Em.View.extend({
+    templateName: "views_relation_new_columns",
+    pickField: function(e) {
+      return this.get('parentView').pickField(e);
     }
   });
   app.Relation.ListView = Em.View.extend({
