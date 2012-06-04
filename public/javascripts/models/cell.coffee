@@ -43,12 +43,16 @@ app.Cell = Ember.Object.extend
       res = roundNumber(res,3) if _.isNumber(res)
       res
     else
-      res
+      res      
 
-    res = res.toValue() if res && res.toValue
     res).property('rawValue','row.table.workspace.relations.@each.formula').cacheable()
 
-  value: ( -> @$primitiveValue ).property('primitiveValue')
+  value: (-> 
+    res = @$primitiveValue
+    if res && res.toValue
+      res.toValue()
+    else
+      res ).property('primitiveValue')
 
   areObserversSetup: false
   ensureSetupObservers: ->
