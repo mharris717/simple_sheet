@@ -54,6 +54,7 @@ window.Eval = {
     instanceEval(obj,str)
 
   evalFormula: (obj,rawStr,fields) ->
+    rawStr = rawStr.substr(1,9999) if rawStr && rawStr.substr && rawStr.substr(0,1) == '='
     parser = if fields.parse then fields else @getFormulaParser(vars: fields)
     parsed = parser.myParse(rawStr)
     #logger.log "raw #{rawStr}\nparsed #{parsed}"
@@ -63,5 +64,8 @@ window.Eval = {
     #catch error
     #  throw error
       #throw "parsed #{rawStr} into #{parsed} | #{error}"
+
+  isFormula: (str) ->
+    str && str.substr && str.substr(0,1) == '='
 
 }

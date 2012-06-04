@@ -71,11 +71,17 @@
     },
     evalFormula: function(obj, rawStr, fields) {
       var parsed, parser;
+      if (rawStr && rawStr.substr && rawStr.substr(0, 1) === '=') {
+        rawStr = rawStr.substr(1, 9999);
+      }
       parser = fields.parse ? fields : this.getFormulaParser({
         vars: fields
       });
       parsed = parser.myParse(rawStr);
       return this.multiEval(obj, parsed);
+    },
+    isFormula: function(str) {
+      return str && str.substr && str.substr(0, 1) === '=';
     }
   };
 }).call(this);

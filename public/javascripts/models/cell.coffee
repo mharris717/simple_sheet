@@ -34,21 +34,21 @@ app.Cell = Ember.Object.extend
   columnFormula: (->
     @$row.$table.$formulas.get(@$field)).property("row.table.formulas")
   
-  value: (->
+  primitiveValue: (->
     res = @$rawValueOrFormula
     row = @$row 
 
-    res = if res && res.substr && res.substr(0,1) == '='
-      rest = res.substr(1,999)
-      logger.debug "eval #{@$field} | #{rest}"
-      res = row.evalInContext(rest)
+    res = if Eval.isFormula(res)
+      res = row.evalInContext(res)
       res = roundNumber(res,3) if _.isNumber(res)
       res
     else
       res
-    #logger.log "value call for #{@$field} res #{res}"
+
     res = res.toValue() if res && res.toValue
     res).property('rawValue','row.table.workspace.relations.@each.formula').cacheable()
+
+  value: ( -> @$primitiveValue ).property('primitiveValue')
 
   areObserversSetup: false
   ensureSetupObservers: ->
