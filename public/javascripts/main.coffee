@@ -55,8 +55,8 @@ app.NewColumnHeaderView = Ember.View.extend
     logger.log "create on newColumn"
     @set('editing',false)
     @set('wasClicked',false)
-    if isPresent(@$field)
-      @$table.addColumn(@$field)
+    @$table.addColumnWithFieldParsing(@$field)
+        
 
 app.NewRowView = Ember.View.extend
   templateName: "views_new_row"

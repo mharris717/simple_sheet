@@ -44,13 +44,15 @@
       res = this.get('rawValueOrFormula');
       row = this.get('row');
       res = Eval.isFormula(res) ? (res = row.evalInContext(res), _.isNumber(res) ? res = roundNumber(res, 3) : void 0, res) : res;
-      if (res && res.toValue) {
-        res = res.toValue();
-      }
       return res;
     }).property('rawValue', 'row.table.workspace.relations.@each.formula').cacheable(),
     value: (function() {
-      return this.get('primitiveValue');
+      res = this.get('primitiveValue');
+      if (res && res.toValue) {
+        return res.toValue();
+      } else {
+        return res;
+      }
     }).property('primitiveValue'),
     areObserversSetup: false,
     ensureSetupObservers: function() {
@@ -77,78 +79,6 @@
       }
     }).observes('rawValue')
   });
-  Array.prototype.max = function() {
-    var obj, _i, _len;
-    res = this[0];
-    if (this.length === 0) {
-      return res;
-    }
-    if (this.length === 1) {
-      return this[0];
-    }
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      obj = this[_i];
-      if (obj) {
-        obj = parseFloat(obj);
-      }
-      if (!res) {
-        res = obj;
-      } else if (obj && obj > res) {
-        res = obj;
-      }
-    }
-    return res;
-  };
-  Array.prototype.min = function() {
-    var obj, _i, _len;
-    res = this[0];
-    if (this.length === 0) {
-      return res;
-    }
-    if (this.length === 1) {
-      return this[0];
-    }
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      obj = this[_i];
-      if (obj) {
-        obj = parseFloat(obj);
-      }
-      if (!res) {
-        res = obj;
-      } else if (obj && obj < res) {
-        res = obj;
-      }
-    }
-    return res;
-  };
-  Array.prototype.avg = function() {
-    var obj, _i, _len;
-    if (this.length === 0) {
-      return 0;
-    }
-    res = 0;
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      obj = this[_i];
-      if (obj) {
-        res += parseFloat(obj);
-      }
-    }
-    return res / this.length;
-  };
-  Array.prototype.sum = function() {
-    var obj, _i, _len;
-    if (this.length === 0) {
-      return 0;
-    }
-    res = 0;
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      obj = this[_i];
-      if (obj) {
-        res += parseFloat(obj);
-      }
-    }
-    return res;
-  };
   app.Cell.CompositeCell = Em.Object.extend({
     toValue: function(type) {
       if (type == null) {

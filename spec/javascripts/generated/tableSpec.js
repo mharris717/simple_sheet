@@ -47,6 +47,28 @@
         });
       });
     });
+    describe("new column", function() {
+      var lastRow, row, table;
+      row = table = lastRow = null;
+      beforeEach(function() {
+        var workspace;
+        getWorkspacesFresh();
+        workspace = getWorkspaces()[0];
+        table = workspace.get('tables').get('content')[0];
+        row = table.get('rows').get('content')[0];
+        return table.setupAll();
+      });
+      it('parses formula', function() {
+        var hr;
+        table.addColumnWithFieldParsing("zzz=hr");
+        hr = row.getCellValue('hr');
+        return expect(row.getCellValue('zzz')).toEqual(hr);
+      });
+      return it('parses formula multiple =', function() {
+        table.addColumnWithFieldParsing("zzzz=if 2 == 3 then 10 else 20");
+        return expect(row.getCellValue('zzzz')).toEqual(20);
+      });
+    });
     describe('sum across relation', function() {
       var players, row, stats;
       row = players = stats = null;

@@ -39,6 +39,23 @@ describe 'Stuff', ->
       it 'works other direction', ->
         expect(row.rowFromTable('widgets')).toBeDefined()
 
+  describe "new column", ->
+    row = table = lastRow = null
+    beforeEach ->
+      getWorkspacesFresh()
+      workspace = getWorkspaces()[0]
+      table = workspace.$tables.$content[0]
+      row = table.$rows.$content[0]
+      table.setupAll()
+
+    it 'parses formula', ->
+      table.addColumnWithFieldParsing("zzz=hr")
+      hr = row.getCellValue('hr')
+      expect(row.getCellValue('zzz')).toEqual(hr)
+
+    it 'parses formula multiple =', ->
+      table.addColumnWithFieldParsing("zzzz=if 2 == 3 then 10 else 20")
+      expect(row.getCellValue('zzzz')).toEqual(20)
 
   describe 'sum across relation', ->
     row = players = stats = null

@@ -69,6 +69,18 @@ app.Table = Em.Object.extend
     @$addlFields.pushObject(col)
     @setFormula(col,form) if isPresent(form)
 
+  addColumnWithFieldParsing: (col) ->
+    if isPresent(col)
+      if /=/.exec(col)
+        arr = col.split("=")
+        form = if arr.length > 2
+          arr[1..-1].join("=")
+        else
+          arr[1]
+        @addColumn(arr[0],"=#{form}")
+      else
+        @addColumn(col)
+
   addRelation: (otherTable, formula) -> 
     @$relations.add otherTable, formula
 

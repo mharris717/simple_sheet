@@ -60,9 +60,7 @@
       logger.log("create on newColumn");
       this.set('editing', false);
       this.set('wasClicked', false);
-      if (isPresent(this.get('field'))) {
-        return this.get('table').addColumn(this.get('field'));
-      }
+      return this.get('table').addColumnWithFieldParsing(this.get('field'));
     }
   });
   app.NewRowView = Ember.View.extend({

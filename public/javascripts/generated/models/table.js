@@ -123,6 +123,18 @@
         return this.setFormula(col, form);
       }
     },
+    addColumnWithFieldParsing: function(col) {
+      var arr, form;
+      if (isPresent(col)) {
+        if (/=/.exec(col)) {
+          arr = col.split("=");
+          form = arr.length > 2 ? arr.slice(1).join("=") : arr[1];
+          return this.addColumn(arr[0], "=" + form);
+        } else {
+          return this.addColumn(col);
+        }
+      }
+    },
     addRelation: function(otherTable, formula) {
       return this.get('relations').add(otherTable, formula);
     },
@@ -171,6 +183,7 @@
       return _results;
     },
     loadCSV: function(csv) {
+      return;
       return $.post("/convert", {
         body: csv
       }, __bind(function(rows) {
