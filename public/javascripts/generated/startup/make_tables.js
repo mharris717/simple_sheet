@@ -120,10 +120,6 @@
     t = app.Table.create({
       name: 'presidents'
     });
-    $.get("/presidents.csv", function(data) {
-      console.debug(data);
-      return t.loadCSV(data);
-    });
     return t;
   };
   window.getNamedTable = function(name) {

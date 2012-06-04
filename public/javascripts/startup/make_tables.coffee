@@ -55,9 +55,10 @@ window.makeLoadTable = ->
 makePresidentsTable = ->
   t = app.Table.create(name: 'presidents')
 
-  $.get "/presidents.csv", (data) ->
-    console.debug data
-    t.loadCSV data
+  #$.get "/presidents.csv", (data) ->
+  #  console.debug data
+  #  t.loadCSV data
+  
   t
 
 window.getNamedTable = (name) ->

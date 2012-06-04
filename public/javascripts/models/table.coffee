@@ -96,6 +96,7 @@ app.Table = Em.Object.extend
 
 
   loadCSV: (csv) ->
+    return
     #csv = escape(csv)
     $.post "/convert", {body: csv}, (rows) =>
       console.debug "csv #{rows.length} for #{@$name}"
