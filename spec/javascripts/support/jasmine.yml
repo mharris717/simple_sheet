@@ -13,6 +13,7 @@
 src_files:
     - public/javascripts/**/jquery*.js
     - public/javascripts/**/vendor/**/*.js
+    - public/javascripts/**/ext/**/*.js
     - public/javascripts/**/util/**/*.js
     - public/javascripts/**/startup/**/*.js
     - public/javascripts/**/models/**/*.js

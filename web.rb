@@ -10,6 +10,8 @@ helpers do
         [0,f]
       elsif f =~ /vendor/
         [1,f]
+      elsif f =~ /ext/
+        [1.1,f]
       elsif f =~ /startup/
         [1.5,f]
       elsif f =~ /util/
