@@ -57,6 +57,9 @@
       name: 'players'
     });
     t.setFormula("hr", "=$stats.hr");
+    t.setFormula("hr_min", "=$stats.hr.min");
+    t.setFormula("hr_max", "=$stats.hr.max");
+    t.setFormula("hr_avg", "=$stats.hr.avg");
     t.addRow({
       name: 'Ted Williams',
       side: 'L'
